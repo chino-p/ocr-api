@@ -14,12 +14,17 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
+import java.math.RoundingMode;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 public class BaiduOcrClient {
+
+    private BaiduOcrClient () {
+    }
 
     static final RestTemplate restTemplate = new RestTemplate();
 
@@ -50,16 +55,17 @@ public class BaiduOcrClient {
             // 发送请求
             ResponseEntity<VATInvoiceData> response = restTemplate.exchange(url, HttpMethod.POST, entity,
                     VATInvoiceData.class);
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy年MM月dd日");
             if (response.getBody() != null) {
                 WordsResult wordsResult = response.getBody().getWordsResult();
                 VATInvoiceDTO vatInvoiceDTO = new VATInvoiceDTO();
                 vatInvoiceDTO.setInvoiceNum(wordsResult.getInvoiceNum());
-                vatInvoiceDTO.setInvoiceDate(LocalDateTime.parse(wordsResult.getInvoiceDate()));
+                vatInvoiceDTO.setInvoiceDate(LocalDate.parse(wordsResult.getInvoiceDate(), formatter));
                 vatInvoiceDTO.setSellerName(wordsResult.getSellerName());
                 vatInvoiceDTO.setPurchaserName(wordsResult.getPurchaserName());
                 vatInvoiceDTO.setTotalAmountIncludeTax(new BigDecimal(wordsResult.getAmountInFiguers()));
                 vatInvoiceDTO.setTotalTax(new BigDecimal(wordsResult.getTotalTax()));
-                vatInvoiceDTO.setTotalAmount(new BigDecimal(wordsResult.getAmountInWords()));
+                vatInvoiceDTO.setTotalAmount(new BigDecimal(wordsResult.getTotalAmount()));
                 int commoditySize = wordsResult.getCommodityName().size();
                 List<CommodityDTO> commodityDTOList = new ArrayList<>(commoditySize);
                 for (int i = 0; i < commoditySize; i++) {
@@ -85,9 +91,14 @@ public class BaiduOcrClient {
         commodityDTO.setCommodityNum(new BigDecimal(wordsResult.getCommodityNum().get(i).getWord()));
         commodityDTO.setCommodityAmount(new BigDecimal(wordsResult.getCommodityAmount().get(i).getWord()));
         commodityDTO.setCommodityTaxRate(
-                new BigDecimal(wordsResult.getCommodityTaxRate().get(i).getWord()));
+                convertPercentageToDecimal(wordsResult.getCommodityTaxRate().get(i).getWord()));
         commodityDTO.setCommodityTax(new BigDecimal(wordsResult.getCommodityTax().get(i).getWord()));
         return commodityDTO;
+    }
+
+    private static BigDecimal convertPercentageToDecimal(String percentage) {
+        return new BigDecimal(percentage.replace("%", ""))
+                .divide(BigDecimal.valueOf(100), 4, RoundingMode.HALF_UP);
     }
 
     private static String getAccessToken() throws IOException {

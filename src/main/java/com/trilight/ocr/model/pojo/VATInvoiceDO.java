@@ -1,16 +1,22 @@
 package com.trilight.ocr.model.pojo;
 
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.List;
 
+@TableName("vat_invoice")
+@EqualsAndHashCode(callSuper = true)
 @Data
-public class VATInvoiceDO {
+public class VATInvoiceDO extends BaseEntity {
 
-    @TableId
+    @TableId(type = IdType.AUTO)
     private Long vatInvoiceId;
 
     /**
@@ -31,7 +37,7 @@ public class VATInvoiceDO {
     /**
      * 开票日期
      */
-    private LocalDateTime invoiceDate;
+    private LocalDate invoiceDate;
 
     /**
      * 价税合计
@@ -48,5 +54,6 @@ public class VATInvoiceDO {
      */
     private BigDecimal totalAmount;
 
+    @TableField(exist = false)
     private List<CommodityDO> commodityList;
 }

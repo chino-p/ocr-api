@@ -5,7 +5,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.List;
 
 @EqualsAndHashCode(callSuper = true)
@@ -32,7 +32,7 @@ public class VATInvoiceDTO extends BaseEntity {
     /**
      * 开票日期
      */
-    private LocalDateTime invoiceDate;
+    private LocalDate invoiceDate;
 
     /**
      * 价税合计
