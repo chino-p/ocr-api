@@ -28,4 +28,16 @@ public class VATInvoiceController {
     public PageResult<VATInvoiceDTO> pageVATInvoice(PageQuery pageQuery, VATInvoiceDTO vatInvoiceDTO) {
         return vatInvoiceService.pageVATInvoice(pageQuery, vatInvoiceDTO);
     }
+
+    @PutMapping("/{vatInvoiceId}")
+    public R<Void> updateVATInvoice(@PathVariable Long vatInvoiceId, @RequestBody VATInvoiceDTO vatInvoiceDTO) {
+        vatInvoiceService.updateVATInvoice(vatInvoiceId, vatInvoiceDTO);
+        return R.ok();
+    }
+
+    @DeleteMapping("/{vatInvoiceId}")
+    public R<Void> deleteVATInvoice(@PathVariable Long vatInvoiceId) {
+         vatInvoiceService.removeById(vatInvoiceId);
+        return R.ok();
+    }
 }

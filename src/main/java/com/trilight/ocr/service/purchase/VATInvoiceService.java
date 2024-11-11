@@ -13,4 +13,6 @@ public interface VATInvoiceService extends IService<VATInvoiceDO> {
     R<Void> uploadInvoiceFiles(MultipartFile[] files);
 
     PageResult<VATInvoiceDTO> pageVATInvoice(PageQuery pageQuery, VATInvoiceDTO vatInvoiceDTO);
+
+    void updateVATInvoice(Long vatInvoiceId, VATInvoiceDTO vatInvoiceDTO);
 }

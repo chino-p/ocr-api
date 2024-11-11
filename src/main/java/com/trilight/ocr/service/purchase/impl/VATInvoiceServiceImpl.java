@@ -1,6 +1,7 @@
 package com.trilight.ocr.service.purchase.impl;
 
 import cn.hutool.core.bean.BeanUtil;
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.baomidou.mybatisplus.extension.toolkit.Db;
 import com.trilight.ocr.client.ocr.BaiduOcrClient;
@@ -49,7 +50,14 @@ public class VATInvoiceServiceImpl extends ServiceImpl<VATInvoiceMapper, VATInvo
 
     @Override
     public PageResult<VATInvoiceDTO> pageVATInvoice(PageQuery pageQuery, VATInvoiceDTO vatInvoiceDTO) {
-        baseMapper.pageVATInvoice(pageQuery.build(), vatInvoiceDTO);
-        return null;
+        IPage<VATInvoiceDTO> vatInvoiceDTOIPage = baseMapper.pageVATInvoice(pageQuery.build(), vatInvoiceDTO);
+        return PageResult.build(vatInvoiceDTOIPage);
+    }
+
+    @Override
+    public void updateVATInvoice(Long vatInvoiceId, VATInvoiceDTO vatInvoiceDTO) {
+        VATInvoiceDO vatInvoiceDO = BeanUtil.copyProperties(vatInvoiceDTO, VATInvoiceDO.class);
+        vatInvoiceDO.setVatInvoiceId(vatInvoiceId);
+        updateById(vatInvoiceDO);
     }
 }
