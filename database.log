@@ -1,2 +1,0 @@
-1731327149488|10|statement|DELETE FROM vat_invoice WHERE vat_invoice_id=1
-1731327152380|10|statement|DELETE FROM vat_invoice WHERE vat_invoice_id=1
