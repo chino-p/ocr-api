@@ -12,6 +12,9 @@ public enum BizCodeEnum {
     NOT_FOUND(404, "资源未找到"),
     INTERNAL_SERVER_ERROR(500, "服务器内部错误"),
 
+    // 定义服务器端错误
+    INVALID_SORT_PARAM(10001, "排序参数有误"),
+
     // 定义业务错误码
     USER_NOT_FOUND(1001, "用户不存在"),
     ORDER_NOT_FOUND(1002, "订单不存在"),

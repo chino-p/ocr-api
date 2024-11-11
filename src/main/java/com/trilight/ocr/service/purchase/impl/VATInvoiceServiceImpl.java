@@ -4,6 +4,8 @@ import cn.hutool.core.bean.BeanUtil;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.baomidou.mybatisplus.extension.toolkit.Db;
 import com.trilight.ocr.client.ocr.BaiduOcrClient;
+import com.trilight.ocr.common.model.PageQuery;
+import com.trilight.ocr.common.model.PageResult;
 import com.trilight.ocr.common.model.R;
 import com.trilight.ocr.enums.BizCodeEnum;
 import com.trilight.ocr.exception.BizException;
@@ -43,5 +45,11 @@ public class VATInvoiceServiceImpl extends ServiceImpl<VATInvoiceMapper, VATInvo
         } catch (IOException e) {
             throw new BizException(BizCodeEnum.FILE_PROCESS_ERROR);
         }
+    }
+
+    @Override
+    public PageResult<VATInvoiceDTO> pageVATInvoice(PageQuery pageQuery, VATInvoiceDTO vatInvoiceDTO) {
+        baseMapper.pageVATInvoice(pageQuery.build(), vatInvoiceDTO);
+        return null;
     }
 }
