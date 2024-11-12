@@ -2,6 +2,7 @@ package com.trilight.ocr.client.ocr;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.trilight.ocr.client.ocr.model.CodeResult;
 import com.trilight.ocr.client.ocr.model.VATInvoiceData;
 import com.trilight.ocr.client.ocr.model.WordsResult;
 import com.trilight.ocr.model.dto.purchase.CommodityDTO;
@@ -20,6 +21,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 public class BaiduOcrClient {
 
@@ -80,6 +82,27 @@ public class BaiduOcrClient {
         }
 
         return vatInvoiceDTOList;
+    }
+
+    public static String parseCode(String pdfBase64) throws IOException {
+        String accessToken = getAccessToken();
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+        headers.setAccept(MediaType.parseMediaTypes(MediaType.APPLICATION_JSON_VALUE));
+        MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
+        body.add("pdf_file", pdfBase64);
+
+        HttpEntity<MultiValueMap<String, String>> entity = new HttpEntity<>(body, headers);
+
+        String url = UriComponentsBuilder
+                .fromHttpUrl("https://aip.baidubce.com/rest/2.0/ocr/v1/qrcode")
+                .queryParam("access_token", accessToken)
+                .toUriString();
+
+        ResponseEntity<CodeResult> response = restTemplate.exchange(url, HttpMethod.POST, entity,
+                CodeResult.class);
+        System.out.println(Objects.requireNonNull(response.getBody()).getCodeResults().get(0).getText().get(0));
+        return null;
     }
 
     private static CommodityDTO buildCommodityDTO(WordsResult wordsResult, int i) {

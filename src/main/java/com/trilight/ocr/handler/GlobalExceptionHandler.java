@@ -24,8 +24,9 @@ public class GlobalExceptionHandler {
 
     @ResponseStatus(HttpStatus.CONFLICT)
     @ExceptionHandler(DuplicateKeyException.class)
-    public R<Void> handleDuplicateKeyException(DuplicateKeyException ex) {
+    public R<Void> handleDuplicateKeyException(DuplicateKeyException ex, HttpServletRequest request) {
         String message = ex.getMessage();
+        log.error("请求地址'{}',业务异常'{}'", request.getRequestURI(), ex.getMessage(), ex);
         if (message.contains("vat_invoice")) {
             return R.fail(101, "发票号已存在");
         } else {

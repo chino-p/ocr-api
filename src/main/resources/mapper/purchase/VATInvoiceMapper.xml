@@ -17,5 +17,6 @@
                 AND invoice_num = #{vatInvoiceDTO.invoiceNum}
             </if>
         </where>
+        ORDER BY vat_invoice_id DESC
     </select>
 </mapper>
