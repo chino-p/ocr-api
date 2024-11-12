@@ -38,7 +38,7 @@ public class DeliveryOrderController {
     }
 
     @GetMapping("page")
-    public PageResult<DeliveryOrderDTO> pageVATInvoice(PageQuery pageQuery, DeliveryOrderDTO deliveryOrderDTO) {
+    public PageResult<DeliveryOrderDTO> pageDeliveryOrder(PageQuery pageQuery, DeliveryOrderDTO deliveryOrderDTO) {
         return deliveryOrderService.pageDeliveryOrder(pageQuery, deliveryOrderDTO);
     }
 }
