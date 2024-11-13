@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 public class DeliveryOrderDO {
 
     @TableId(type = IdType.AUTO)
-    private Integer id;
+    private Long id;
 
     /**
      * 供方编码

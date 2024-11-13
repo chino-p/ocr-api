@@ -77,6 +77,16 @@
             <artifactId>p6spy-spring-boot-starter</artifactId>
             <version>1.10.0</version>
         </dependency>
+        <dependency>
+            <groupId>io.minio</groupId>
+            <artifactId>minio</artifactId>
+            <version>8.5.13</version>
+        </dependency>
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>easyexcel</artifactId>
+            <version>4.0.3</version>
+        </dependency>
     </dependencies>
 
     <build>

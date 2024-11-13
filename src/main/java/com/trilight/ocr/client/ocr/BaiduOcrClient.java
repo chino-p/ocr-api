@@ -90,7 +90,7 @@ public class BaiduOcrClient {
         headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
         headers.setAccept(MediaType.parseMediaTypes(MediaType.APPLICATION_JSON_VALUE));
         MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
-        body.add("pdf_file", pdfBase64);
+        body.add("image", pdfBase64);
 
         HttpEntity<MultiValueMap<String, String>> entity = new HttpEntity<>(body, headers);
 
@@ -101,8 +101,7 @@ public class BaiduOcrClient {
 
         ResponseEntity<CodeResult> response = restTemplate.exchange(url, HttpMethod.POST, entity,
                 CodeResult.class);
-        System.out.println(Objects.requireNonNull(response.getBody()).getCodeResults().get(0).getText().get(0));
-        return null;
+        return Objects.requireNonNull(response.getBody()).getCodeResults().get(0).getText().get(0);
     }
 
     private static CommodityDTO buildCommodityDTO(WordsResult wordsResult, int i) {

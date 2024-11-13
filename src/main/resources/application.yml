@@ -17,6 +17,16 @@ spring:
           username: root
           password: root
       strict: true
+  servlet:
+    multipart:
+      max-file-size: 10MB    # 每个文件的最大大小
+      max-request-size: 10MB # 总请求的最大大小
 mybatis-plus:
   configuration:
     log-impl: org.apache.ibatis.logging.slf4j.Slf4jImpl
+
+minio:
+  url: 172.16.20.19
+  access-key: root
+  secret-key: root123456
+  bucket-name: tds-2

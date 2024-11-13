@@ -8,7 +8,7 @@ import java.util.List;
 @Data
 public class CodeResult {
 
-    @JsonProperty("code_results")
+    @JsonProperty("codes_result")
     private List<Code> codeResults;
 
     @JsonProperty("codes_result_num")

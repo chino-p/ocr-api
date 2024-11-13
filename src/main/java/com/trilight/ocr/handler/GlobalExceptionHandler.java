@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler(BizException.class)
     public R<Void> handleCustomException(BizException ex, HttpServletRequest request) {
         log.error("请求地址'{}',业务异常'{}'", request.getRequestURI(), ex.getMessage(), ex);

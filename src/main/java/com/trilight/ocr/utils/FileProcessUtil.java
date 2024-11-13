@@ -24,7 +24,7 @@ public class FileProcessUtil {
 
             for (MultipartFile file : files) {
                 String fileName = file.getOriginalFilename();
-                if (fileName == null || !fileName.endsWith(".pdf")) {
+                if (fileName == null || (!fileName.endsWith(".pdf") && !fileName.endsWith(".jpg"))) {
                     throw new BizException(BizCodeEnum.SUPPORT_PDF_ONLY);
                 }
                 pdfContents.add(processPdfToBase64(file.getInputStream()));
@@ -36,7 +36,7 @@ public class FileProcessUtil {
         }
     }
 
-    private static String processPdfToBase64(InputStream pdfInputStream) throws IOException {
+    public static String processPdfToBase64(InputStream pdfInputStream) throws IOException {
         byte[] pdfBytes = pdfInputStream.readAllBytes();
         return Base64.getEncoder().encodeToString(pdfBytes);
     }
