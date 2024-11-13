@@ -22,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -49,8 +50,8 @@ public class VATInvoiceServiceImpl extends ServiceImpl<VATInvoiceMapper, VATInvo
     }
 
     @Override
-    public PageResult<VATInvoiceDTO> pageVATInvoice(PageQuery pageQuery, VATInvoiceDTO vatInvoiceDTO) {
-        IPage<VATInvoiceDTO> vatInvoiceDTOIPage = baseMapper.pageVATInvoice(pageQuery.build(), vatInvoiceDTO);
+    public PageResult<VATInvoiceDTO> pageVATInvoice(PageQuery pageQuery, VATInvoiceDTO vatInvoiceDTO, LocalDate startDate, LocalDate endDate) {
+        IPage<VATInvoiceDTO> vatInvoiceDTOIPage = baseMapper.pageVATInvoice(pageQuery.build(), vatInvoiceDTO, startDate, endDate);
         return PageResult.build(vatInvoiceDTOIPage);
     }
 

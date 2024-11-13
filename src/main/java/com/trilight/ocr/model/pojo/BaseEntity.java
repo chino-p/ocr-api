@@ -1,5 +1,8 @@
 package com.trilight.ocr.model.pojo;
 
+import lombok.Data;
+
+@Data
 public class BaseEntity {
 
     private String createBy;

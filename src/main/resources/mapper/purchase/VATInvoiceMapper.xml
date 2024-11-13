@@ -7,14 +7,20 @@
     <select id="pageVATInvoice" resultType="com.trilight.ocr.model.dto.purchase.VATInvoiceDTO">
         SELECT * FROM vat_invoice
         <where>
-            <if test="vatInvoiceDTO.purchaserName != null and vatInvoiceDTO.purchaserName != ''">
-                AND purchaser_name LIKE CONCAT('%', #{vatInvoiceDTO.purchaserName}, '%')
+            <if test="vatInvoice.purchaserName != null and vatInvoice.purchaserName != ''">
+                AND purchaser_name LIKE CONCAT('%', #{vatInvoice.purchaserName}, '%')
             </if>
-            <if test="vatInvoiceDTO.sellerName != null and vatInvoiceDTO.sellerName != ''">
-                AND seller_name = #{vatInvoiceDTO.sellerName}
+            <if test="vatInvoice.sellerName != null and vatInvoice.sellerName != ''">
+                AND seller_name = #{vatInvoice.sellerName}
             </if>
-            <if test="vatInvoiceDTO.invoiceNum != null and vatInvoiceDTO.invoiceNum != ''">
-                AND invoice_num = #{vatInvoiceDTO.invoiceNum}
+            <if test="vatInvoice.invoiceNum != null and vatInvoice.invoiceNum != ''">
+                AND invoice_num = #{vatInvoice.invoiceNum}
+            </if>
+            <if test="startDate != null">
+                AND invoice_date &gt;= #{startDate}
+            </if>
+            <if test="endDate != null">
+                AND invoice_date &lt;= #{endDate}
             </if>
         </where>
         ORDER BY vat_invoice_id DESC
