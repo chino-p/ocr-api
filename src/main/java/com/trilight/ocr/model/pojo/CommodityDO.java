@@ -4,14 +4,12 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 
 import java.math.BigDecimal;
 
 @TableName("commodity")
-@EqualsAndHashCode(callSuper = true)
 @Data
-public class CommodityDO extends BaseEntity {
+public class CommodityDO {
 
     @TableId(type = IdType.AUTO)
     private Long commodityId;

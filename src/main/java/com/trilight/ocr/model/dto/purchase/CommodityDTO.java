@@ -1,14 +1,11 @@
 package com.trilight.ocr.model.dto.purchase;
 
-import com.trilight.ocr.model.pojo.BaseEntity;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 
 import java.math.BigDecimal;
 
-@EqualsAndHashCode(callSuper = true)
 @Data
-public class CommodityDTO extends BaseEntity {
+public class CommodityDTO {
 
     private Long commodityId;
 
