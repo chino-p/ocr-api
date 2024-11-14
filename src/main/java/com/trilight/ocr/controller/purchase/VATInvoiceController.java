@@ -8,11 +8,14 @@ import com.trilight.ocr.common.model.PageResult;
 import com.trilight.ocr.common.model.R;
 import com.trilight.ocr.model.dto.purchase.VATInvoiceDTO;
 import com.trilight.ocr.model.dto.purchase.VATInvoiceExcelDTO;
+import com.trilight.ocr.model.pojo.CommodityDO;
 import com.trilight.ocr.model.pojo.VATInvoiceDO;
+import com.trilight.ocr.service.purchase.CommodityService;
 import com.trilight.ocr.service.purchase.VATInvoiceService;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ObjectUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -24,13 +27,14 @@ import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.util.List;
 
-@RequestMapping("/vat_invoice")
+@RequestMapping("/api/vat_invoice")
 @RequiredArgsConstructor
 @RestController
 @Validated
 public class VATInvoiceController {
 
     private final VATInvoiceService vatInvoiceService;
+    private final CommodityService commodityService;
 
     @PostMapping("/upload")
     public R<Void> uploadFiles(@RequestParam("files") @NotNull(message = "文件不能为空") MultipartFile[] files) {
@@ -50,9 +54,11 @@ public class VATInvoiceController {
         return R.ok();
     }
 
+    @Transactional(rollbackFor = Exception.class)
     @DeleteMapping("/{vatInvoiceId}")
     public R<Void> deleteVATInvoice(@PathVariable Long vatInvoiceId) {
         vatInvoiceService.removeById(vatInvoiceId);
+        commodityService.remove(new QueryWrapper<CommodityDO>().eq("vat_invoice_id", vatInvoiceId));
         return R.ok();
     }
 
