@@ -22,6 +22,12 @@
             <if test="endDate != null">
                 AND invoice_date &lt;= #{endDate}
             </if>
+            <if test="createStartTime != null">
+                AND create_time &gt;= #{createStartTime}
+            </if>
+            <if test="createEndTime != null">
+                AND create_time &lt;= #{createEndTime}
+            </if>
         </where>
         ORDER BY vat_invoice_id DESC
     </select>

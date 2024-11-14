@@ -9,12 +9,13 @@ import com.trilight.ocr.model.pojo.VATInvoiceDO;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 public interface VATInvoiceService extends IService<VATInvoiceDO> {
 
     R<Void> uploadInvoiceFiles(MultipartFile[] files);
 
-    PageResult<VATInvoiceDTO> pageVATInvoice(PageQuery pageQuery, VATInvoiceDTO vatInvoiceDTO, LocalDate startDate, LocalDate endDate);
+    PageResult<VATInvoiceDTO> pageVATInvoice(PageQuery pageQuery, VATInvoiceDTO vatInvoiceDTO, LocalDate startDate, LocalDate endDate, LocalDateTime createStartTime, LocalDateTime createEndTime);
 
     void updateVATInvoice(Long vatInvoiceId, VATInvoiceDTO vatInvoiceDTO);
 }

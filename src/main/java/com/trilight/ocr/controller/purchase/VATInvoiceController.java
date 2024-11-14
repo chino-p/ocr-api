@@ -25,6 +25,7 @@ import java.io.IOException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @RequestMapping("/api/vat_invoice")
@@ -44,8 +45,11 @@ public class VATInvoiceController {
     @GetMapping("page")
     public PageResult<VATInvoiceDTO> pageVATInvoice(PageQuery pageQuery, VATInvoiceDTO vatInvoiceDTO,
                                                     @RequestParam(required = false) LocalDate startDate,
-                                                    @RequestParam(required = false) LocalDate endDate) {
-        return vatInvoiceService.pageVATInvoice(pageQuery, vatInvoiceDTO, startDate, endDate);
+                                                    @RequestParam(required = false) LocalDate endDate,
+                                                    @RequestParam(required = false) LocalDateTime createStartTime,
+                                                    @RequestParam(required = false) LocalDateTime createEndTime) {
+        return vatInvoiceService.pageVATInvoice(pageQuery, vatInvoiceDTO, startDate, endDate, createStartTime,
+                createEndTime);
     }
 
     @PutMapping("/{vatInvoiceId}")
@@ -69,7 +73,9 @@ public class VATInvoiceController {
             @RequestParam(required = false) String purchaserName,
             @RequestParam(required = false) LocalDate startDate,
             @RequestParam(required = false) LocalDate endDate,
-            HttpServletResponse response) throws IOException {
+            @RequestParam(required = false) LocalDateTime createStartTime,
+            @RequestParam(required = false) LocalDateTime createEndTime,
+                    HttpServletResponse response) throws IOException {
 
         // 设置响应头
         response.setContentType("application/vnd.ms-excel");
@@ -83,6 +89,8 @@ public class VATInvoiceController {
                 .like(!ObjectUtils.isEmpty(purchaserName), "purchaser_name", purchaserName)
                 .ge(startDate != null, "invoice_date", startDate)
                 .le(endDate != null, "invoice_date", endDate)
+                .ge(createStartTime != null, "create_time", createStartTime)
+                .le(createEndTime != null, "create_time", createEndTime)
         );
 
         List<VATInvoiceExcelDTO> vatInvoiceDTOList = BeanUtil.copyToList(vatInvoiceDOList, VATInvoiceExcelDTO.class);

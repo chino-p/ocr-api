@@ -8,9 +8,10 @@ import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Repository
 public interface VATInvoiceMapper extends BaseMapper<VATInvoiceDO> {
 
-    IPage<VATInvoiceDTO> pageVATInvoice(IPage<VATInvoiceDTO> page, @Param("vatInvoice") VATInvoiceDTO vatInvoiceDTO, @Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate);
+    IPage<VATInvoiceDTO> pageVATInvoice(IPage<VATInvoiceDTO> page, @Param("vatInvoice") VATInvoiceDTO vatInvoiceDTO, @Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate, @Param("createStartTime") LocalDateTime createStartTime, @Param("createEndTime") LocalDateTime createEndTime);
 }
