@@ -5,7 +5,7 @@ import com.trilight.ocr.common.model.PageQuery;
 import com.trilight.ocr.common.model.PageResult;
 import com.trilight.ocr.common.model.R;
 import com.trilight.ocr.model.dto.purchase.VATInvoiceDTO;
-import com.trilight.ocr.model.pojo.VATInvoiceDO;
+import com.trilight.ocr.model.pojo.purchase.VATInvoiceDO;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;

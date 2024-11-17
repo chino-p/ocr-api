@@ -46,4 +46,6 @@ public class DeliveryOrderDTO {
     private LocalDateTime updateTime;
 
     private List<DeliveryOrderDetailDTO> deliveryOrderDetailDTOList;
+
+    private List<DeliveryConfirmFileDTO> deliveryConfirmFileDTOList;
 }

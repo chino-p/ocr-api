@@ -2,15 +2,55 @@
 <!DOCTYPE mapper
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.trilight.ocr.mapper.DeliveryOrderMapper">
+<mapper namespace="com.trilight.ocr.mapper.purchase.DeliveryOrderMapper">
 
-    <select id="pageDeliveryOrder" resultType="com.trilight.ocr.model.dto.purchase.DeliveryOrderDTO">
-        SELECT * FROM delivery_header
+    <resultMap id="deliveryOrderMap" type="com.trilight.ocr.model.dto.purchase.DeliveryOrderDTO">
+        <id column="delivery_header_id" property="id"/>
+        <result column="supplier_code" property="supplierCode"/>
+        <result column="delivery_date" property="deliveryDate"/>
+        <result column="customer_name" property="customerName"/>
+        <result column="contact" property="contact"/>
+        <result column="shipping_address" property="shippingAddress"/>
+        <result column="contact_number" property="contactNumber"/>
+        <result column="dh_create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+        <collection property="deliveryConfirmFileDTOList" ofType="com.trilight.ocr.model.dto.purchase.DeliveryConfirmFileDTO">
+            <id column="delivery_confirm_file_id" property="id"/>
+            <result column="delivery_id" property="deliveryId"/>
+            <result column="file_name" property="fileName"/>
+            <result column="oss_file_name" property="ossFileName"/>
+            <result column="dcf_create_time" property="createTime"/>
+
+        </collection>
+    </resultMap>
+
+    <select id="pageDeliveryOrder" resultMap="deliveryOrderMap">
+        SELECT
+        dh.id AS delivery_header_id,
+        dh.supplier_code,
+        dh.delivery_date,
+        dh.customer_name,
+        dh.contact,
+        dh.shipping_address,
+        dh.contact_number,
+        dh.create_time AS dh_create_time,
+        dh.update_time,
+        dcf.id AS delivery_confirm_file_id,
+        dcf.delivery_id,
+        dcf.file_name,
+        dcf.oss_file_name,
+        dcf.create_time AS dcf_create_time
+        FROM
+        delivery_header dh
+        LEFT JOIN
+        delivery_confirm_file dcf
+        ON
+        dh.id = dcf.delivery_id
         <where>
-            <if test="deliveryOrderDTO.supplierCode != null and vatInvoiceDTO.supplierCode != ''">
-                AND supplier_code LIKE CONCAT('%', #{deliveryOrderDTO.supplierCode}, '%')
+            <if test="deliveryOrderDTO.supplierCode != null and deliveryOrderDTO.supplierCode != ''">
+                AND dh.supplier_code LIKE CONCAT('%', #{deliveryOrderDTO.supplierCode}, '%')
             </if>
         </where>
-        ORDER BY id DESC
+        ORDER BY dh.id DESC
     </select>
 </mapper>

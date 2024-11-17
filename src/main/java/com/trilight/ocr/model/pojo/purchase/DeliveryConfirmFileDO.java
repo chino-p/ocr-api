@@ -1,4 +1,4 @@
-package com.trilight.ocr.model.pojo;
+package com.trilight.ocr.model.pojo.purchase;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;

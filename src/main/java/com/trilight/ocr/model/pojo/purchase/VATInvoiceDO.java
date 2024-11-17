@@ -1,9 +1,10 @@
-package com.trilight.ocr.model.pojo;
+package com.trilight.ocr.model.pojo.purchase;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.trilight.ocr.model.pojo.BaseEntity;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
