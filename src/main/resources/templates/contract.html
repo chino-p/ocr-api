@@ -1,24 +1,21 @@
 <!DOCTYPE html>
-<html lang="zh-CN" xmlns:th="http://www.w3.org/1999/xhtml">
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
 
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>购销合同</title>
     <style>
         @font-face {
             font-family: 'SimSun';
             src: url('classpath:/fonts/SimSun.ttf') format('truetype');
         }
+
         body {
             font-family: 'SimSun', Arial, sans-serif;
-        }
-        body {
-            font-family: SimSun, Arial, sans-serif;
             font-size: 10.5pt;
-            margin: 20mm;
-            /* 页面两侧的外边距 */
             line-height: 1.5;
+            margin: 0;
         }
 
         h1 {
@@ -27,20 +24,26 @@
             margin-bottom: 20px;
         }
 
+        /* 替代 flex 的布局：使用浮动 */
         .contract-header {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 20px;
+            overflow: hidden; /* 清除浮动 */
+            margin-bottom: 0;
         }
 
         .contract-header div {
-            width: 45%;
+            float: left;
+            width: 70%;
+        }
+
+        .contract-header div:last-child {
+            width: 30%;
+            margin-right: 0; /* 最后一部分没有间距 */
         }
 
         table {
             width: 100%;
             border-collapse: collapse;
-            margin-bottom: 20px;
+            margin-bottom: 0;
         }
 
         table th,
@@ -50,57 +53,50 @@
             padding: 5px;
         }
 
+        table th {
+            background-color: #eaeaea;
+            font-weight: bold;
+        }
+
+        .amount {
+            text-align: left;
+            padding-left: 10px;
+            font-weight: bold;
+        }
+
         p {
             margin: 5px 0;
         }
 
+        /* 替代 flexbox 的签章布局 */
         .sign-section {
             margin-top: 40px;
-            display: flex;
-            justify-content: space-between;
-            padding: 10px;
+            overflow: hidden;
         }
 
         .sign-table {
-            width: 48%;
+            float: left;
+            margin-right: 4%;
             border-collapse: collapse;
-            margin: 0 auto;
+        }
+
+        .sign-table:last-child {
+            margin-right: 0;
         }
 
         .sign-table th,
         .sign-table td {
             border: 1px solid #000;
+            padding: 0;
             text-align: left;
-            padding: 8px;
         }
 
         .sign-table th {
-            width: 25%;
-            /* 设置表格列宽度 */
+            background-color: #eaeaea;
         }
 
-        .box {
-            width: 48%;
-            padding: 10px;
-            box-sizing: border-box;
-            margin: 0;
-        }
-
-        .info-table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-
-        .info-table th,
-        .info-table td {
-            border: 1px solid #000;
-            padding: 8px;
-            text-align: left;
-        }
-
-        .info-table th {
-            width: 25%;
-            font-weight: bold;
+        @page {
+            margin: 20px; /* 移除所有边距 */
         }
     </style>
 </head>
@@ -109,14 +105,13 @@
 <h1>购 销 合 同</h1>
 <div class="contract-header">
     <div>
-        <p><strong>供方：</strong>武汉X科技发展有限公司</p>
-        <p><strong>地址：</strong>武汉市高新技术开发区光谷大道777号3号电子厂房</p>
-
+        <p><strong>供方：</strong>武汉钧恒科技有限公司</p>
+        <p><strong>地址：</strong>合肥紫钧光恒有限公司</p>
     </div>
     <div>
         <p><strong>合同编号：</strong>JHS20240601001</p>
-        <p><strong>签订地点：</strong>武汉</p>
-        <p><strong>签订日期：</strong><span th:text="${currentDate}"></span></p>
+        <p><strong>签订地点：</strong>中国·武汉</p>
+        <p><strong>签订时间：</strong><span th:text="${currentDate}"></span></p>
     </div>
 </div>
 
@@ -135,23 +130,27 @@
     </tr>
     </thead>
     <tbody>
-    <tr>
-        <td>1</td>
-        <td>品名</td>
-        <td>规格</td>
-        <td>订购数量</td>
-        <td>单价</td>
-        <td>金额</td>
-        <td>预交交日期</td>
-        <td></td>
+    <tr th:each="item, iterStat : ${productList}">
+        <td th:text="${iterStat.count}">1</td> <!-- 自动生成序号，从1开始 -->
+        <td th:text="${item.name}">品名</td> <!-- 产品名称 -->
+        <td th:text="${item.specification}">规格</td> <!-- 规格 -->
+        <td th:text="${item.quantity}">订购数量</td> <!-- 数量 -->
+        <td th:text="${item.unitPrice}">单价</td> <!-- 单价 -->
+        <td th:text="${item.totalPrice}">金额</td> <!-- 金额 -->
+        <td th:text="${item.deliveryDate}">预交交日期</td> <!-- 交货时间 -->
+        <td th:text="${item.remark}"></td> <!-- 备注 -->
     </tr>
     </tbody>
+    <tfoot>
+    <tr>
+        <td colspan="8" class="amount">
+            合计人民币金额(大写)：<strong th:text="${totalAmountCn}">元整</strong> (¥<span th:text="${totalAmount}"></span>)（含13%增值税）。
+        </td>
+    </tr>
+    </tfoot>
 </table>
-
-<p>合计人民币金额(大写)：<strong>元整</strong> (¥0.00)（含13%增值税）。</p>
-
-<p><strong>二、质量要求、技术标准、供方对质量负责的条件和期限：</strong>按需方合同中注明的规格的要求以及双方签订的相关协议和国家相关标准执行。</p>
-
+<p><strong>二、质量要求、技术标准、供方对质量负责的条件和期限：</strong>按需方合同中注明的规格的要求以及双方签订的相关协议和国家相关标准执行。
+</p>
 <p><strong>三、交货时间：</strong>同上。</p>
 <p><strong>四、交货方式：</strong>供方发货，费用由供方承担。</p>
 <p><strong>五、交货地点：</strong>需方公司所在地。</p>
@@ -170,7 +169,7 @@
 </p>
 
 <div class="sign-section">
-    <table class="info-table">
+    <table class="sign-table">
         <thead>
         <tr>
             <th>供方</th>

@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>购销合同表格</title>
+    <style>
+        body {
+            font-family: SimSun, Arial, sans-serif;
+            font-size: 10.5pt;
+            line-height: 1.5;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+
+        table th,
+        table td {
+            border: 1px solid black;
+            padding: 5px;
+            text-align: center;
+            word-break: break-word;
+        }
+
+        table th {
+            background-color: #f9f9f9;
+        }
+
+        .header-text {
+            font-weight: bold;
+        }
+
+        .red-text {
+            color: red;
+        }
+
+        .amount {
+            text-align: left;
+            padding-left: 10px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+<p class="header-text">一、产品名称、商标、型号、厂家、数量、金额：</p>
+<table>
+    <thead>
+    <tr>
+        <th>序号</th>
+        <th>产品名称</th>
+        <th>规格</th>
+        <th>数量<br>（PCS）</th>
+        <th>单价<br>（元）</th>
+        <th>金额<br>（元）</th>
+        <th>交货时间</th>
+        <th>备注</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+        <td>1</td>
+        <td class="red-text">品名</td>
+        <td class="red-text">规格</td>
+        <td class="red-text">订购数量</td>
+        <td class="red-text">单价*财务给出点数<br>（3位小数）</td>
+        <td class="red-text">订购数量*单价*财务给出点数</td>
+        <td class="red-text">预交交日期</td>
+        <td></td>
+    </tr>
+    </tbody>
+    <tfoot>
+    <tr>
+        <td colspan="8" class="amount">
+            合计人民币金额（大写）：<span >元整</span> （<span>¥00.00</span>）（含 13% 增值税）
+        </td>
+    </tr>
+    </tfoot>
+</table>
+</body>
+</html>

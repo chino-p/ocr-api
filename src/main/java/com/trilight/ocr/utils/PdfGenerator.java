@@ -23,11 +23,17 @@ public class PdfGenerator {
         Resource fontResource = resourceLoader.getResource("classpath:/fonts/SimSun.ttf");
 
         try (InputStream fontStream = fontResource.getInputStream()) {
-            renderer.getFontResolver().addFont(fontResource.getURI().toString(), BaseFont.IDENTITY_H, BaseFont.EMBEDDED);
+            renderer.getFontResolver()
+                    .addFont(fontResource.getURI().toString(), BaseFont.IDENTITY_H, BaseFont.EMBEDDED);
         }
 
         renderer.setDocumentFromString(htmlContent);
         renderer.layout();
+
+        renderer.getSharedContext().setPrint(true);
+        renderer.getSharedContext().setInteractive(false);
+        renderer.getSharedContext().getTextRenderer().setSmoothingThreshold(0);
+
         renderer.createPDF(outputStream);
     }
 }
