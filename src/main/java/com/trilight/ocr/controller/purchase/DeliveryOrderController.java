@@ -8,7 +8,6 @@ import com.trilight.ocr.service.purchase.DeliveryOrderService;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -32,8 +31,8 @@ public class DeliveryOrderController {
         return deliveryOrderService.pageDeliveryOrder(pageQuery, deliveryOrderDTO);
     }
 
-    @GetMapping("/delivery/download/{id}")
-    public ResponseEntity<byte[]> downloadFile(@PathVariable("id") Long id, HttpServletResponse response) {
-        return deliveryOrderService.downloadConfirmFile(id, response);
+    @GetMapping("download/{id}")
+    public void downloadFile(@PathVariable("id") Long id, HttpServletResponse response) {
+        deliveryOrderService.downloadConfirmFile(id, response);
     }
 }

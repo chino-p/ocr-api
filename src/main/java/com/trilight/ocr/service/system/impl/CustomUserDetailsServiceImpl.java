@@ -3,7 +3,7 @@
 // import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 // import com.trilight.ocr.enums.BizCodeEnum;
 // import com.trilight.ocr.exception.BizException;
-// import com.trilight.ocr.model.pojo.system.UserDO;
+// import com.trilight.ocr.model.pojo.system.SysUserDO;
 // import com.trilight.ocr.service.system.UserService;
 // import lombok.AllArgsConstructor;
 // import org.springframework.security.core.userdetails.UserDetails;
@@ -19,10 +19,10 @@
 //
 //     @Override
 //     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-//         UserDO userDO = userService.getOne(new QueryWrapper<UserDO>().eq("username", username));
-//         if (userDO != null) {
+//         SysUserDO userDO = userService.getOne(new QueryWrapper<SysUserDO>().eq("username", username));
+//         if (userDO == null) {
 //             throw new BizException(BizCodeEnum.USER_NOT_FOUND);
 //         }
-//         return null;
+//         return new UserPrinciple(userDO);
 //     }
 // }

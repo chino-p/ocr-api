@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.w3.org/1999/xhtml">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>购销合同</title>
+    <style>
+        @font-face {
+            font-family: 'SimSun';
+            src: url('classpath:/fonts/SimSun.ttf') format('truetype');
+        }
+        body {
+            font-family: 'SimSun', Arial, sans-serif;
+        }
+        body {
+            font-family: SimSun, Arial, sans-serif;
+            font-size: 10.5pt;
+            margin: 20mm;
+            /* 页面两侧的外边距 */
+            line-height: 1.5;
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 20px;
+            margin-bottom: 20px;
+        }
+
+        .contract-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+        .contract-header div {
+            width: 45%;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+
+        table th,
+        table td {
+            border: 1px solid #000;
+            text-align: center;
+            padding: 5px;
+        }
+
+        p {
+            margin: 5px 0;
+        }
+
+        .sign-section {
+            margin-top: 40px;
+            display: flex;
+            justify-content: space-between;
+            padding: 10px;
+        }
+
+        .sign-table {
+            width: 48%;
+            border-collapse: collapse;
+            margin: 0 auto;
+        }
+
+        .sign-table th,
+        .sign-table td {
+            border: 1px solid #000;
+            text-align: left;
+            padding: 8px;
+        }
+
+        .sign-table th {
+            width: 25%;
+            /* 设置表格列宽度 */
+        }
+
+        .box {
+            width: 48%;
+            padding: 10px;
+            box-sizing: border-box;
+            margin: 0;
+        }
+
+        .info-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .info-table th,
+        .info-table td {
+            border: 1px solid #000;
+            padding: 8px;
+            text-align: left;
+        }
+
+        .info-table th {
+            width: 25%;
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body>
+<h1>购 销 合 同</h1>
+<div class="contract-header">
+    <div>
+        <p><strong>供方：</strong>武汉X科技发展有限公司</p>
+        <p><strong>地址：</strong>武汉市高新技术开发区光谷大道777号3号电子厂房</p>
+
+    </div>
+    <div>
+        <p><strong>合同编号：</strong>JHS20240601001</p>
+        <p><strong>签订地点：</strong>武汉</p>
+        <p><strong>签订日期：</strong><span th:text="${currentDate}"></span></p>
+    </div>
+</div>
+
+<p><strong>一、产品名称、商标、型号、厂家、数量、金额：</strong></p>
+<table>
+    <thead>
+    <tr>
+        <th>序号</th>
+        <th>产品名称</th>
+        <th>规格</th>
+        <th>数量(PCS)</th>
+        <th>单价(元)</th>
+        <th>金额(元)</th>
+        <th>交货时间</th>
+        <th>备注</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+        <td>1</td>
+        <td>品名</td>
+        <td>规格</td>
+        <td>订购数量</td>
+        <td>单价</td>
+        <td>金额</td>
+        <td>预交交日期</td>
+        <td></td>
+    </tr>
+    </tbody>
+</table>
+
+<p>合计人民币金额(大写)：<strong>元整</strong> (¥0.00)（含13%增值税）。</p>
+
+<p><strong>二、质量要求、技术标准、供方对质量负责的条件和期限：</strong>按需方合同中注明的规格的要求以及双方签订的相关协议和国家相关标准执行。</p>
+
+<p><strong>三、交货时间：</strong>同上。</p>
+<p><strong>四、交货方式：</strong>供方发货，费用由供方承担。</p>
+<p><strong>五、交货地点：</strong>需方公司所在地。</p>
+<p><strong>六、运费负担：</strong>供方承担运费。</p>
+<p><strong>七、合理损耗及计算方法：</strong>供方承担交货前的损耗。</p>
+<p><strong>八、包装标准、包装物的供应与回收：</strong>包装应坚固适合产品运输而不损坏产品。包装物不回收，费用供方自理。</p>
+<p><strong>九、验收标准、方法及提出异议期限：</strong>按需方要求及相关国家标准验收。</p>
+<p><strong>十、随机备品及供应方法：</strong>供方随产品提供合格证明书及相关资料等。</p>
+<p><strong>十一、结算方式及期限：</strong>款到发货。（结算方式销售根据实际情况填写）</p>
+<p>
+    <strong>十二、违约责任：</strong>供方应严格按需方要求按时供货，保证产品质量，对质检不合格的产品，供方必须更换且承担换货的一切费用，因产品质量不合格给需方造成损失的，供方应承担赔偿责任。需方应按合同约定及时给供方付款。
+</p>
+<p><strong>十三、解决合同纠纷的方式：</strong>双方友好协商，和解不成的，可向需方所在地人民法院提起诉讼。</p>
+<p><strong>十四、其它约定事项：</strong>
+    1.在质量保证期内如属供方产品质量问题，供方提供更换或在收到需方传真48小时内派人到现场解决问题，且不发生需方费用。2.本合同价格包括合同产品、合同全额13％增值税税金、技术服务、调试和制作费等所有费用。3供方免费到现场指导安装和配合参加验收。4.发生不可抗力时，双方应协商解决合同执行问题。5.合同传真件有效。6.以上未涉及的其他必要合作条款，请参照双方签署的供货合作协议。
+</p>
+
+<div class="sign-section">
+    <table class="info-table">
+        <thead>
+        <tr>
+            <th>供方</th>
+            <th>需方</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <td>单位名称(章): 武汉钧恒科技有限公司</td>
+            <td>单位名称(章): 合肥紫钧光恒技术有限公司</td>
+        </tr>
+        <tr>
+            <td>单位地址: 湖北省武汉市东湖新技术开发区光谷三路777号3号电子厂房5楼</td>
+            <td>单位地址: 安徽省合肥市高新区长宁大道与长安路交口西南角集成电路标准化厂房A-2号楼</td>
+        </tr>
+        <tr>
+            <td>委托代理人:</td>
+            <td>委托代理人:</td>
+        </tr>
+        <tr>
+            <td>电话: 027-86698883</td>
+            <td>电话: 027-86698883</td>
+        </tr>
+        <tr>
+            <td>传真: 027-81629288</td>
+            <td>传真: 027-81629288</td>
+        </tr>
+        <tr>
+            <td>开户银行: 招商银行武汉江夏支行</td>
+            <td>开户银行: 招商银行合肥分行创新大道支行</td>
+        </tr>
+        <tr>
+            <td>账号: 1279 1102 0410 107</td>
+            <td>账号: 5519 0719 9010 601</td>
+        </tr>
+        <tr>
+            <td>税号: 914201005200621X4</td>
+            <td>税号: 91340100MA8LH02R74</td>
+        </tr>
+        <tr>
+            <td>邮政编码: 430223</td>
+            <td>邮政编码:</td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+</body>
+
+</html>
