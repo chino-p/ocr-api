@@ -10,7 +10,7 @@ import java.util.Collections;
 
 public class UserPrinciple implements UserDetails {
 
-    private SysUserDO user;
+    private final SysUserDO user;
 
     public UserPrinciple(SysUserDO user) {
         this.user = user;
