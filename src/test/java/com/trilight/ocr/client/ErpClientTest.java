@@ -12,6 +12,12 @@ import java.util.List;
 class ErpClientTest {
 
     @Test
+    void testNo() {
+        String contractNo = "MP20211109001";
+        System.out.println(contractNo.substring(2));
+    }
+
+    @Test
     void testRequest() throws Exception {
 
         StdData<RequestParameter> stdData = new StdData<>();
@@ -37,8 +43,29 @@ class ErpClientTest {
         stdData.setParameter(requestParameter);
         requestParameter.setConditions(condition);
 
-        ErpRequest<ResultParameter> request = ErpClient.request(erpRequest,
-                "yf.oapi.sales.order.data.query.get");
+        ErpRequest<ResultParameter<SalesOrder>> request = ErpClient.request(erpRequest,
+                "yf.oapi.sales.order.data.query.get", SalesOrder.class);
+        System.out.println(request);
+    }
+
+    @Test
+    void testRequest1() throws Exception {
+
+        StdData<ReadQueryParameter> stdData = new StdData<>();
+        ErpRequest<ReadQueryParameter> erpRequest = new ErpRequest<>();
+        erpRequest.setStdData(stdData);
+        ReadQueryParameter requestParameter = new ReadQueryParameter();
+        List<DataKey> dataKeyList = new ArrayList<>();
+        DataKey dataKey = new DataKey();
+        dataKey.setDocTypeNo("2201");
+        dataKey.setDocNo("20241109001");
+        dataKeyList.add(dataKey);
+        requestParameter.setDataKeyList(dataKeyList);
+
+        stdData.setParameter(requestParameter);
+
+        ErpRequest<ResultParameter<SalesOrder>> request = ErpClient.request(erpRequest,
+                "yf.oapi.sales.order.data.read.get", SalesOrder.class);
         System.out.println(request);
     }
 }

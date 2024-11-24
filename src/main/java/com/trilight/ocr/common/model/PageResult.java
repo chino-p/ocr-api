@@ -51,4 +51,13 @@ public class PageResult<T> implements Serializable {
         rspData.setTotal(page.getTotal());
         return rspData;
     }
+
+    public static <T> PageResult<T> build(List<T> list) {
+        PageResult<T> rspData = new PageResult<>();
+        rspData.setCode(200);
+        rspData.setMsg("查询成功");
+        rspData.setRows(list);
+        rspData.setTotal(0);
+        return rspData;
+    }
 }

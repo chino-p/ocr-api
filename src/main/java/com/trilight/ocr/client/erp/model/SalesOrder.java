@@ -1,8 +1,12 @@
 package com.trilight.ocr.client.erp.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
+import java.util.List;
+
+@JsonIgnoreProperties(ignoreUnknown = true)
 @Data
 public class SalesOrder {
     @JsonProperty("doc_type_no")
@@ -274,4 +278,7 @@ public class SalesOrder {
 
     @JsonProperty("project_name")
     private String projectName;
+
+    @JsonProperty("sales_order_detail_data")
+    private List<SalesOrderDetail> salesOrderDetailList;
 }

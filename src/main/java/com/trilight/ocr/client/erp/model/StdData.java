@@ -12,5 +12,5 @@ public class StdData<T> {
     private Execution execution;
 
     @JsonProperty("parameter")
-    private T parameter; // 使用泛型
+    private T parameter;
 }

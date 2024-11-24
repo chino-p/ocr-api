@@ -4,15 +4,17 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
+import java.util.List;
+
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Data
-public class ResultParameter<T> {
-    @JsonProperty("total_result")
-    private int totalResult;
+public class QueryResult<T> {
+    @JsonProperty("cnt")
+    private int cnt;
 
-    @JsonProperty("has_next")
-    private boolean hasNext;
+    @JsonProperty("rows")
+    private List<T> rows;
 
-    @JsonProperty("result")
-    private QueryResult<T> queryResult;
+    @JsonProperty("success")
+    private List<Success> successList;
 }

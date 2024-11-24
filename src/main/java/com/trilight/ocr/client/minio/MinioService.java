@@ -49,6 +49,5 @@ public class MinioService {
                             .object(fileName)
                             .build()
             );
-
     }
 }

@@ -24,6 +24,10 @@ public class VATInvoiceDTO extends BaseEntity {
      */
     private String sellerName;
 
+    private String supplierNo;
+
+    private String ossFileName;
+
     /**
      * 发票号码
      */

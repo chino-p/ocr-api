@@ -66,6 +66,11 @@ public class VATInvoiceController {
         return R.ok();
     }
 
+    @GetMapping("download/{vatInvoiceId}")
+    public void downloadFile(@PathVariable Long vatInvoiceId, HttpServletResponse response) {
+        vatInvoiceService.downloadInvoice(vatInvoiceId, response);
+    }
+
     @GetMapping("/export")
     public void exportVATInvoice(
             @RequestParam(required = false) String invoiceNum,
@@ -77,7 +82,6 @@ public class VATInvoiceController {
             @RequestParam(required = false) LocalDateTime createEndTime,
                     HttpServletResponse response) throws IOException {
 
-        // 设置响应头
         response.setContentType("application/vnd.ms-excel");
         response.setCharacterEncoding("utf-8");
         String fileName = URLEncoder.encode("采购发票", StandardCharsets.UTF_8).replace("\\+", "%20");

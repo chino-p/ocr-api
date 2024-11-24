@@ -6,14 +6,15 @@ import cn.hutool.http.HttpUtil;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.trilight.ocr.client.erp.model.ErpRequest;
-import com.trilight.ocr.client.erp.model.RequestParameter;
 import com.trilight.ocr.client.erp.model.ResultParameter;
+import lombok.NoArgsConstructor;
 
+@NoArgsConstructor
 public class ErpClient {
 
     private static final ObjectMapper objectMapper = new ObjectMapper();
 
-    public static ErpRequest<ResultParameter> request(ErpRequest<RequestParameter> request, String serviceName) throws
+    public static <T, R> ErpRequest<ResultParameter<T>> request(ErpRequest<R> request, String serviceName, Class<T> resultClass) throws
             JsonProcessingException {
         // API URL
         String url = "http://10.0.3.100/YFOAP/openapi.dll/datasnap/rest/TServerMethods1/ATNPost";
@@ -34,6 +35,7 @@ public class ErpClient {
         response.close();
 
         return objectMapper.readValue(responseBody, objectMapper.getTypeFactory()
-                .constructParametricType(ErpRequest.class, ResultParameter.class));
+                .constructParametricType(ErpRequest.class, objectMapper.getTypeFactory()
+                        .constructParametricType(ResultParameter.class, resultClass)));
     }
 }

@@ -13,6 +13,9 @@
             <if test="vatInvoice.sellerName != null and vatInvoice.sellerName != ''">
                 AND seller_name = #{vatInvoice.sellerName}
             </if>
+            <if test="vatInvoice.supplierNo != null and vatInvoice.supplierNo != ''">
+                AND supplier_no LIKE CONCAT('%', #{vatInvoice.supplierNo}, '%')
+            </if>
             <if test="vatInvoice.invoiceNum != null and vatInvoice.invoiceNum != ''">
                 AND invoice_num = #{vatInvoice.invoiceNum}
             </if>

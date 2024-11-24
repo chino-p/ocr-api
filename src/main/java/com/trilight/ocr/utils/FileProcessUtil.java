@@ -6,31 +6,17 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
 import java.util.Base64;
-import java.util.List;
 
 public class FileProcessUtil {
 
-    /**
-     * Convert PDF file to Base64 string
-     *
-     * @param files files from the request
-     * @return Base64 string list
-     */
-    public static List<String> processFile(MultipartFile[] files) {
+    public static String processFile(MultipartFile file) {
         try {
-            List<String> pdfContents = new ArrayList<>();
-
-            for (MultipartFile file : files) {
-                String fileName = file.getOriginalFilename();
-                if (fileName == null || (!fileName.endsWith(".pdf") && !fileName.endsWith(".jpg"))) {
-                    throw new BizException(BizCodeEnum.SUPPORT_PDF_ONLY);
-                }
-                pdfContents.add(processPdfToBase64(file.getInputStream()));
+            String fileName = file.getOriginalFilename();
+            if (fileName == null || (!fileName.endsWith(".pdf") && !fileName.endsWith(".jpg"))) {
+                throw new BizException(BizCodeEnum.SUPPORT_PDF_ONLY);
             }
-
-            return pdfContents;
+            return processPdfToBase64(file.getInputStream());
         } catch (IOException e) {
             throw new BizException(BizCodeEnum.FILE_PROCESS_ERROR);
         }

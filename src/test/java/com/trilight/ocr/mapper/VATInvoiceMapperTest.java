@@ -24,15 +24,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 @SpringBootTest
  class VATInvoiceMapperTest {
 
-    // @Autowired
-    // BCryptPasswordEncoder bCryptPasswordEncoder;
-
     @Autowired
     ResourceLoader resourceLoader;
 
     @Test
     void testInsert() {
-        // System.out.println(bCryptPasswordEncoder.encode("123456"));
     }
 
     @Autowired
