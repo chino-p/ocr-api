@@ -22,7 +22,8 @@ public enum BizCodeEnum {
 
     // 文件相关
     SUPPORT_PDF_ONLY(2001, "仅支持pdf格式"),
-    FILE_PROCESS_ERROR(2002, "文件处理异常");
+    FILE_PROCESS_ERROR(2002, "文件处理异常"),
+    PARSE_CODE_ERROR(2003,"二维码解析失败" );
 
     private final int code;
     private final String msg;

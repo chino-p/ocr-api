@@ -54,7 +54,7 @@ public class DeliveryOrderServiceImpl extends ServiceImpl<DeliveryOrderMapper, D
         for (MultipartFile file : files) {
             try {
                 String base64Content = FileProcessUtil.processPdfToBase64(file.getInputStream());
-                String code = BaiduOcrClient.parseCode(base64Content);
+                String code = BaiduOcrClient.parseDeliveryCode(base64Content);
                 List<DeliveryOrderDetailDO> deliveryOrderDetailDOList = deliveryOrderDetailService.list(
                         new QueryWrapper<DeliveryOrderDetailDO>().eq("tracking_no", code));
 

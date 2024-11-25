@@ -99,38 +99,31 @@ public class SalesOrderController {
             }
             SalesOrder salesOrder = successList.get(0).getSalesOrderList().get(0);
             List<SalesOrderDetail> salesOrderDetailList = salesOrder.getSalesOrderDetailList();
-
+            String docDate = salesOrder.getDocDate();
             ContractDO contractDO = contractService.getOne(
                     new QueryWrapper<ContractDO>().eq("doc_no", salesOrder.getDocNo())
                             .eq("doc_type_no", salesOrder.getDocTypeNo()));
 
             ModelMap model = new ModelMap();
             String contractNum = "";
-            LocalDate now = LocalDate.now();
-            String contractMid = now.format(DateTimeFormatter.ofPattern("yyyyMMdd"));
             if (contractDO != null) {
                 contractNum = contractDO.getContractNum();
-                model.addAttribute("currentDate", LocalDate.parse(contractDO.getContractNum().substring(2, 10),
-                        DateTimeFormatter.ofPattern("yyyyMMdd")).format(DateTimeFormatter.ofPattern("yyyy年MM月dd日")));
             } else {
                 ContractDO latestContract = contractService.getOne(new LambdaQueryWrapper<ContractDO>()
+                        .like(ContractDO::getContractNum, docDate)
                         .orderByDesc(ContractDO::getId)
                         .last("LIMIT 1"));
                 if (latestContract == null) {
-                    contractNum = "MP" + contractMid + "001";
+                    contractNum = "JHXS" + docDate + "001";
                 } else {
-                    if (contractMid.equals(latestContract.getContractNum().substring(2, 10))) {
-                        contractNum = "MP" + (Long.parseLong(latestContract.getContractNum().substring(2)) + 1);
-                    } else {
-                        contractNum = "MP" + contractMid + "001";
-                    }
+                    contractNum = "JHXS" + (Long.parseLong(latestContract.getContractNum().substring(4)) + 1);
                 }
-
                 contractService.save(
                         ContractDO.builder().contractNum(contractNum).docNo(docNo).docTypeNo(docTypeNo).build());
-
-                model.addAttribute("currentDate", now.format(DateTimeFormatter.ofPattern("yyyy年MM月dd日")));
             }
+
+            model.addAttribute("currentDate", LocalDate.parse(docDate,
+                    DateTimeFormatter.ofPattern("yyyyMMdd")).format(DateTimeFormatter.ofPattern("yyyy年MM月dd日")));
 
             model.addAttribute("contractNo", contractNum);
             List<ProductDTO> productList = salesOrderDetailList.stream()
@@ -165,7 +158,8 @@ public class SalesOrderController {
                 os.write(pdfBytes);
                 os.flush();
             }
-        } catch (Exception e) {
+        } catch (
+                Exception e) {
             throw new RuntimeException("Failed to download invoice", e);
         }
     }

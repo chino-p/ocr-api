@@ -5,6 +5,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.trilight.ocr.client.ocr.model.CodeResult;
 import com.trilight.ocr.client.ocr.model.VATInvoiceData;
 import com.trilight.ocr.client.ocr.model.WordsResult;
+import com.trilight.ocr.enums.BizCodeEnum;
+import com.trilight.ocr.exception.BizException;
 import com.trilight.ocr.model.dto.purchase.CommodityDTO;
 import com.trilight.ocr.model.dto.purchase.VATInvoiceDTO;
 import org.springframework.http.*;
@@ -80,7 +82,7 @@ public class BaiduOcrClient {
         return null;
     }
 
-    public static String parseCode(String pdfBase64) throws IOException {
+    public static String parseDeliveryCode(String pdfBase64) throws IOException {
         String accessToken = getAccessToken();
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
@@ -97,6 +99,9 @@ public class BaiduOcrClient {
 
         ResponseEntity<CodeResult> response = restTemplate.exchange(url, HttpMethod.POST, entity,
                 CodeResult.class);
+        if (Objects.requireNonNull(response.getBody()).getCodeResults() == null) {
+            throw new BizException(BizCodeEnum.PARSE_CODE_ERROR);
+        }
         return Objects.requireNonNull(response.getBody()).getCodeResults().get(0).getText().get(0);
     }
 
