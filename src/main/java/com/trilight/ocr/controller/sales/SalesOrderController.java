@@ -93,7 +93,7 @@ public class SalesOrderController {
 
             ErpRequest<ResultParameter<SalesOrder>> request = ErpClient.request(erpRequest,
                     "yf.oapi.sales.order.data.read.get", SalesOrder.class);
-            List<Success> successList = request.getStdData().getParameter().getQueryResult().getSuccessList();
+            List<Success<SalesOrder>> successList = request.getStdData().getParameter().getQueryResult().getSuccessList();
             if (successList.isEmpty()) {
                 throw new RuntimeException("Failed to download contract");
             }

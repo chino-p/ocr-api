@@ -3,6 +3,8 @@ package com.trilight.ocr.client.erp.model;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
+import java.util.List;
+
 @Data
 public class GoodsReceipt {
 
@@ -161,4 +163,7 @@ public class GoodsReceipt {
 
     @JsonProperty("project_name")
     private String projectName;
+
+    @JsonProperty("purchase_receipt_detail_data")
+    private List<GoodsReceiptDetail> goodsReceiptDetailList;
 }

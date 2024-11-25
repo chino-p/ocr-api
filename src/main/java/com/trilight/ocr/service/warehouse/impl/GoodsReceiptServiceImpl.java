@@ -12,6 +12,7 @@ import com.trilight.ocr.common.model.PageQuery;
 import com.trilight.ocr.common.model.R;
 import com.trilight.ocr.mapper.warehouse.GoodsReceiptMapper;
 import com.trilight.ocr.model.dto.warehouse.GoodsReceiptDTO;
+import com.trilight.ocr.model.dto.warehouse.GoodsReceiptDetailDTO;
 import com.trilight.ocr.model.pojo.warehouse.FailedFileDO;
 import com.trilight.ocr.model.pojo.warehouse.GoodsReceiptDO;
 import com.trilight.ocr.service.warehouse.FailedFileService;
@@ -27,6 +28,8 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -46,9 +49,9 @@ public class GoodsReceiptServiceImpl extends ServiceImpl<GoodsReceiptMapper, Goo
             String originalFilename = file.getOriginalFilename();
             String ossFileName = "";
             try {
+                ossFileName = minioService.uploadFile(file);
                 String base64Content = FileProcessUtil.processPdfToBase64(file.getInputStream());
                 String code = BaiduOcrClient.parseDeliveryCode(base64Content);
-                ossFileName = minioService.uploadFile(file);
                 GoodsReceiptDO goodsReceiptDO = new GoodsReceiptDO();
                 StdData<RequestParameter> stdData = new StdData<>();
                 ErpRequest<RequestParameter> erpRequest = new ErpRequest<>();
@@ -119,7 +122,7 @@ public class GoodsReceiptServiceImpl extends ServiceImpl<GoodsReceiptMapper, Goo
 
             response.setContentType("image/jpeg");
             response.setHeader("Content-Disposition",
-                    "attachment; filename=" + goodsReceiptDO.getOssFileName());
+                    "attachment; filename=" + URLEncoder.encode(goodsReceiptDO.getFileName(), StandardCharsets.UTF_8));
 
             try (InputStream inputStream = minioService.downloadFile(goodsReceiptDO.getOssFileName());
                  OutputStream outputStream = response.getOutputStream()) {
@@ -140,5 +143,46 @@ public class GoodsReceiptServiceImpl extends ServiceImpl<GoodsReceiptMapper, Goo
                 ioException.printStackTrace();
             }
         }
+    }
+
+    @Override
+    public List<GoodsReceiptDetailDTO> getGoodsReceiptDetail(Long id) {
+        try {
+            GoodsReceiptDO goodsReceiptDO = getById(id);
+
+            StdData<ReadQueryParameter> stdData = new StdData<>();
+            ErpRequest<ReadQueryParameter> erpRequest = new ErpRequest<>();
+            erpRequest.setStdData(stdData);
+            ReadQueryParameter requestParameter = new ReadQueryParameter();
+            List<DataKey> dataKeyList = new ArrayList<>();
+            DataKey dataKey = new DataKey();
+            dataKey.setDocTypeNo(goodsReceiptDO.getDocTypeNo());
+            dataKey.setDocNo(goodsReceiptDO.getDocNo());
+            dataKeyList.add(dataKey);
+            requestParameter.setDataKeyList(dataKeyList);
+            stdData.setParameter(requestParameter);
+
+            ErpRequest<ResultParameter<GoodsReceipt>> request = ErpClient.request(erpRequest,
+                    "yf.oapi.purchase.receipt.data.read.get", GoodsReceipt.class);
+            List<Success<GoodsReceipt>> successList = request.getStdData().getParameter().getQueryResult().getSuccessList();
+            Success<GoodsReceipt> goodsReceiptSuccess = successList.get(0);
+            List<GoodsReceipt> goodsReceiptList = goodsReceiptSuccess.getPurchaseReceiptData();
+            GoodsReceipt goodsReceipt = goodsReceiptList.get(0);
+            List<GoodsReceiptDetail> goodsReceiptDetailList = goodsReceipt.getGoodsReceiptDetailList();
+            return goodsReceiptDetailList.stream().map(
+                    goodsReceiptDetail -> {
+                        GoodsReceiptDetailDTO goodsReceiptDetailDTO = new GoodsReceiptDetailDTO();
+                        goodsReceiptDetailDTO.setItemNo(goodsReceiptDetail.getItemNo());
+                        goodsReceiptDetailDTO.setItemName(goodsReceiptDetail.getItemName());
+                        goodsReceiptDetailDTO.setArrivalQty(goodsReceiptDetail.getArrivalQty());
+                        goodsReceiptDetailDTO.setItemSpec(goodsReceiptDetail.getItemSpec());
+                        return goodsReceiptDetailDTO;
+                    }
+            ).toList();
+        } catch (Exception e) {
+
+        }
+
+        return null;
     }
 }

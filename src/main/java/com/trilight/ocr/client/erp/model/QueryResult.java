@@ -16,5 +16,5 @@ public class QueryResult<T> {
     private List<T> rows;
 
     @JsonProperty("success")
-    private List<Success> successList;
+    private List<Success<T>> successList;
 }

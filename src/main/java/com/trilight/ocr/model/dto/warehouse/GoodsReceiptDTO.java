@@ -23,6 +23,8 @@ public class GoodsReceiptDTO extends BaseEntity {
 
     private String ossFileName;
 
+    private String fileName;
+
     private String deliveryNum;
 
     private String createBy;

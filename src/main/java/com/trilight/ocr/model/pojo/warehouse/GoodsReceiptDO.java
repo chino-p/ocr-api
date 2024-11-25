@@ -23,6 +23,8 @@ public class GoodsReceiptDO extends BaseEntity {
 
     private String supplierNo;
 
+    private String fileName;
+
     private String ossFileName;
 
     private String deliveryNum;
