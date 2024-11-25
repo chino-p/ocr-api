@@ -68,4 +68,29 @@ class ErpClientTest {
                 "yf.oapi.sales.order.data.read.get", SalesOrder.class);
         System.out.println(request);
     }
+    @Test
+    void testRequest2() throws Exception {
+
+        StdData<RequestParameter> stdData = new StdData<>();
+        ErpRequest<RequestParameter> erpRequest = new ErpRequest<>();
+        erpRequest.setStdData(stdData);
+        RequestParameter requestParameter = new RequestParameter();
+        requestParameter.setPageNo(1);
+        requestParameter.setPageSize(100000);
+        Conditions condition = new Conditions();
+        Field field1 = new Field();
+        field1.setFieldName("supplier_order_no");
+        field1.setValue("SF3122937341014");
+        field1.setOperator("=");
+        List<Field> fieldList = new ArrayList<>();
+        fieldList.add(field1);
+        condition.setFields(fieldList);
+        condition.setOperator("AND");
+        stdData.setParameter(requestParameter);
+        requestParameter.setConditions(condition);
+        ErpRequest<ResultParameter<GoodsReceipt>> request = ErpClient.request(erpRequest,
+                "yf.oapi.purchase.receipt.data.query.get", GoodsReceipt.class);
+        List<GoodsReceipt> rows = request.getStdData().getParameter().getQueryResult().getRows();
+        System.out.println(rows);
+    }
 }

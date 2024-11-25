@@ -99,7 +99,8 @@ public class BaiduOcrClient {
 
         ResponseEntity<CodeResult> response = restTemplate.exchange(url, HttpMethod.POST, entity,
                 CodeResult.class);
-        if (Objects.requireNonNull(response.getBody()).getCodeResults() == null) {
+        if (Objects.requireNonNull(response.getBody()).getCodeResults() == null || Objects.requireNonNull(
+                response.getBody()).getCodeResults().isEmpty()) {
             throw new BizException(BizCodeEnum.PARSE_CODE_ERROR);
         }
         return Objects.requireNonNull(response.getBody()).getCodeResults().get(0).getText().get(0);

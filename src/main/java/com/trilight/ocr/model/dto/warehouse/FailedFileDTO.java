@@ -1,13 +1,11 @@
-package com.trilight.ocr.model.pojo.warehouse;
+package com.trilight.ocr.model.dto.warehouse;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 
 @Data
-@TableName("failed_file")
-public class FailedFileDO {
+public class FailedFileDTO {
 
     @TableId(value = "id", type = IdType.AUTO)
     private Long id;
