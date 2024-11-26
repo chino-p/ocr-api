@@ -54,14 +54,14 @@ public class SalesOrderController {
         List<SalesOrder> salesOrderList1 = resp1.getStdData().getParameter().getQueryResult().getRows();
         List<SalesOrderDTO> salesOrderDTOList1 = BeanUtil.copyToList(salesOrderList1, SalesOrderDTO.class);
         for (SalesOrderDTO orderDTO : salesOrderDTOList1) {
-            orderDTO.setCompanyNo("0003");
+            orderDTO.setCompanyNo("0001");
         }
         ErpRequest<ResultParameter<SalesOrder>> resp2 = ErpClient.request(erpRequest2,
                 "yf.oapi.sales.order.data.query.get", "0003", SalesOrder.class);
         List<SalesOrder> salesOrderList2 = resp2.getStdData().getParameter().getQueryResult().getRows();
         List<SalesOrderDTO> salesOrderDTOList2 = BeanUtil.copyToList(salesOrderList2, SalesOrderDTO.class);
         for (SalesOrderDTO orderDTO : salesOrderDTOList2) {
-            orderDTO.setCompanyNo("0001");
+            orderDTO.setCompanyNo("0003");
         }
 
         salesOrderDTOList1.addAll(salesOrderDTOList2);
@@ -149,7 +149,7 @@ public class SalesOrderController {
                     contractNum = contractPrefix + (Long.parseLong(latestContract.getContractNum().substring(4)) + 1);
                 }
                 contractService.save(
-                        ContractDO.builder().contractNum(contractNum).docNo(docNo).docTypeNo(docTypeNo).build());
+                        ContractDO.builder().companyNo(companyNo).contractNum(contractNum).docNo(docNo).docTypeNo(docTypeNo).build());
             }
 
             model.addAttribute("currentDate", LocalDate.parse(docDate,
@@ -172,7 +172,7 @@ public class SalesOrderController {
 
             String htmlContent;
             if ("0001".equals(companyNo)) {
-                htmlContent = thymeleafRenderer.renderTemplate("contract1.html", model);
+                htmlContent = thymeleafRenderer.renderTemplate("contract.html", model);
             } else {
                 htmlContent = thymeleafRenderer.renderTemplate("contract2.html", model);
             }

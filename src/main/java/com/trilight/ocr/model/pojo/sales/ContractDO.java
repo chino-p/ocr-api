@@ -16,6 +16,8 @@ public class ContractDO {
 
     private String contractNum;
 
+    private String companyNo;
+
     private String docNo;
 
     private String docTypeNo;
