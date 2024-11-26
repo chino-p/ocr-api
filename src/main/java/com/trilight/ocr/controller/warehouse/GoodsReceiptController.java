@@ -25,7 +25,7 @@ public class GoodsReceiptController {
     private final FailedFileService failedFileService;
 
     @PostMapping("uploadScan")
-    public R<Void> uploadScan(@RequestParam("files")  MultipartFile[] files) {
+    public R<Void> uploadScan(@RequestParam("files") MultipartFile[] files) {
         return goodsReceiptService.uploadDeliverySheet(files);
     }
 
@@ -37,6 +37,11 @@ public class GoodsReceiptController {
     @GetMapping("download/{id}")
     public void downloadFile(@PathVariable Long id, HttpServletResponse response) {
         goodsReceiptService.downloadDeliverySheet(id, response);
+    }
+
+    @GetMapping("erp/search")
+    public R<GoodsReceiptDTO> searchErp(String docNo, String docTypeNo) {
+        return R.ok(goodsReceiptService.searchErp(docTypeNo, docNo));
     }
 
     @GetMapping("/detail/{id}")

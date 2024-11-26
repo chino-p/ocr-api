@@ -20,4 +20,6 @@ public interface GoodsReceiptService extends IService<GoodsReceiptDO>  {
     void downloadDeliverySheet(Long id, HttpServletResponse response);
 
     List<GoodsReceiptDetailDTO> getGoodsReceiptDetail(Long id);
+
+    GoodsReceiptDTO searchErp(String docTypeNo, String docNo);
 }

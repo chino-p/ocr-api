@@ -105,12 +105,12 @@
 <h1>购 销 合 同</h1>
 <div class="contract-header">
     <div>
-        <p><strong>供方：</strong>武汉钧恒科技有限公司</p>
-        <p><strong>需方：</strong>合肥紫钧光恒有限公司</p>
+        <p><strong>供方：</strong>合肥紫钧光恒有限公司</p>
+        <p><strong>需方：</strong>武汉钧恒科技有限公司</p>
     </div>
     <div>
         <p><strong>合同编号：</strong><span th:text="${contractNo}"></span></p>
-        <p><strong>签订地点：</strong>中国·武汉</p>
+        <p><strong>签订地点：</strong>中国·合肥</p>
         <p><strong>签订时间：</strong><span th:text="${currentDate}"></span></p>
     </div>
 </div>
@@ -144,7 +144,8 @@
     <tfoot>
     <tr>
         <td colspan="8" class="amount">
-            合计人民币金额(大写)：<strong th:text="${totalAmountCn}">元整</strong> (¥<span th:text="${totalAmount}"></span>)（含13%增值税）。
+            合计人民币金额(大写)：<strong th:text="${totalAmountCn}">元整</strong> (¥<span
+                th:text="${totalAmount}"></span>)（含13%增值税）。
         </td>
     </tr>
     </tfoot>
@@ -178,36 +179,36 @@
         </thead>
         <tbody>
         <tr>
-            <td>单位名称(章): 武汉钧恒科技有限公司</td>
             <td>单位名称(章): 合肥紫钧光恒技术有限公司</td>
+            <td>单位名称(章): 武汉钧恒科技有限公司</td>
         </tr>
         <tr>
-            <td>单位地址: 武汉东湖新技术开发区光谷三路777号3号电子厂房5楼南面</td>
             <td>单位地址: 安徽省合肥市高新区长宁大道与长安路交口西南角集成电路标准化厂房A-2号楼</td>
+            <td>单位地址: 武汉东湖新技术开发区光谷三路777号3号电子厂房5楼南面</td>
         </tr>
         <tr>
             <td>委托代理人:</td>
             <td>委托代理人:</td>
         </tr>
         <tr>
-            <td>电    话:027-86698883  传真：027-81629288</td>
-            <td>电    话:0551-62650340  传真：</td>
+            <td>电 话:0551-62650340 传真：</td>
+            <td>电 话:027-86698883 传真：027-81629288</td>
         </tr>
         <tr>
-            <td>开户银行: 招商银行股份有限公司武汉江夏支行</td>
             <td>开户银行: 招商银行合肥分行创新大道支行</td>
+            <td>开户银行: 招商银行股份有限公司武汉江夏支行</td>
         </tr>
         <tr>
-            <td>账号: 1279 1102 0410 107</td>
             <td>账号: 5519 0719 9010 601</td>
+            <td>账号: 1279 1102 0410 107</td>
         </tr>
         <tr>
-            <td>税号: 9142 0100 0520 0621 X4</td>
             <td>税号: 9134 0100 MA8L H02R 74</td>
+            <td>税号: 9142 0100 0520 0621 X4</td>
         </tr>
         <tr>
-            <td>邮政编码: 430223</td>
             <td>邮政编码:</td>
+            <td>邮政编码: 430223</td>
         </tr>
         </tbody>
     </table>

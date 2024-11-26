@@ -1,5 +1,6 @@
 package com.trilight.ocr.controller.sales;
 
+import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.convert.Convert;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -10,12 +11,13 @@ import com.trilight.ocr.common.model.PageQuery;
 import com.trilight.ocr.common.model.PageResult;
 import com.trilight.ocr.config.ThymeleafRenderer;
 import com.trilight.ocr.model.dto.sales.ProductDTO;
-import com.trilight.ocr.model.dto.sales.SaleOrderDTO;
+import com.trilight.ocr.model.dto.sales.SalesOrderDTO;
 import com.trilight.ocr.model.pojo.sales.ContractDO;
 import com.trilight.ocr.service.purchase.ContractService;
 import com.trilight.ocr.utils.PdfGenerator;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -42,8 +44,32 @@ public class SalesOrderController {
     private final ContractService contractService;
 
     @GetMapping("page")
-    public PageResult<SalesOrder> pageSalesOrder(PageQuery pageQuery, SaleOrderDTO saleOrderDTO) throws
+    public PageResult<SalesOrderDTO> pageSalesOrder(PageQuery pageQuery, SalesOrderDTO salesOrderDTO) throws
             JsonProcessingException {
+        ErpRequest<RequestParameter> erpRequest1 = generateRequest("0003", "2201");
+        ErpRequest<RequestParameter> erpRequest2 = generateRequest("0001", "2201");
+
+        ErpRequest<ResultParameter<SalesOrder>> resp1 = ErpClient.request(erpRequest1,
+                "yf.oapi.sales.order.data.query.get", "0001", SalesOrder.class);
+        List<SalesOrder> salesOrderList1 = resp1.getStdData().getParameter().getQueryResult().getRows();
+        List<SalesOrderDTO> salesOrderDTOList1 = BeanUtil.copyToList(salesOrderList1, SalesOrderDTO.class);
+        for (SalesOrderDTO orderDTO : salesOrderDTOList1) {
+            orderDTO.setCompanyNo("0003");
+        }
+        ErpRequest<ResultParameter<SalesOrder>> resp2 = ErpClient.request(erpRequest2,
+                "yf.oapi.sales.order.data.query.get", "0003", SalesOrder.class);
+        List<SalesOrder> salesOrderList2 = resp2.getStdData().getParameter().getQueryResult().getRows();
+        List<SalesOrderDTO> salesOrderDTOList2 = BeanUtil.copyToList(salesOrderList2, SalesOrderDTO.class);
+        for (SalesOrderDTO orderDTO : salesOrderDTOList2) {
+            orderDTO.setCompanyNo("0001");
+        }
+
+        salesOrderDTOList1.addAll(salesOrderDTOList2);
+        return PageResult.build(salesOrderDTOList1);
+    }
+
+    @NotNull
+    private static ErpRequest<RequestParameter> generateRequest(String customerNo, String docTypeNo) {
         StdData<RequestParameter> stdData = new StdData<>();
         ErpRequest<RequestParameter> erpRequest = new ErpRequest<>();
         erpRequest.setStdData(stdData);
@@ -53,11 +79,11 @@ public class SalesOrderController {
         Conditions condition = new Conditions();
         Field field1 = new Field();
         field1.setFieldName("customer_no");
-        field1.setValue("0003");
+        field1.setValue(customerNo);
         field1.setOperator("=");
         Field field2 = new Field();
         field2.setFieldName("doc_type_no");
-        field2.setValue("2201");
+        field2.setValue(docTypeNo);
         field2.setOperator("=");
         Field field3 = new Field();
         field3.setFieldName("remarks_1");
@@ -70,14 +96,11 @@ public class SalesOrderController {
         condition.setOperator("AND");
         stdData.setParameter(requestParameter);
         requestParameter.setConditions(condition);
-
-        ErpRequest<ResultParameter<SalesOrder>> request = ErpClient.request(erpRequest,
-                "yf.oapi.sales.order.data.query.get", SalesOrder.class);
-        return PageResult.build(request.getStdData().getParameter().getQueryResult().getRows());
+        return erpRequest;
     }
 
     @GetMapping("/downloadContract")
-    public void downloadInvoice(HttpServletResponse response, String docTypeNo, String docNo) {
+    public void downloadContract(HttpServletResponse response, String docTypeNo, String docNo, String companyNo) {
         try {
             StdData<ReadQueryParameter> stdData = new StdData<>();
             ErpRequest<ReadQueryParameter> erpRequest = new ErpRequest<>();
@@ -92,8 +115,9 @@ public class SalesOrderController {
             stdData.setParameter(requestParameter);
 
             ErpRequest<ResultParameter<SalesOrder>> request = ErpClient.request(erpRequest,
-                    "yf.oapi.sales.order.data.read.get", SalesOrder.class);
-            List<Success<SalesOrder>> successList = request.getStdData().getParameter().getQueryResult().getSuccessList();
+                    "yf.oapi.sales.order.data.read.get", companyNo, SalesOrder.class);
+            List<Success<SalesOrder>> successList = request.getStdData().getParameter().getQueryResult()
+                    .getSuccessList();
             if (successList.isEmpty()) {
                 throw new RuntimeException("Failed to download contract");
             }
@@ -106,6 +130,12 @@ public class SalesOrderController {
 
             ModelMap model = new ModelMap();
             String contractNum = "";
+            String contractPrefix = "";
+            if ("0001".equals(companyNo)) {
+                contractPrefix = "JHXS";
+            } else {
+                contractPrefix = "ZJXS";
+            }
             if (contractDO != null) {
                 contractNum = contractDO.getContractNum();
             } else {
@@ -114,9 +144,9 @@ public class SalesOrderController {
                         .orderByDesc(ContractDO::getId)
                         .last("LIMIT 1"));
                 if (latestContract == null) {
-                    contractNum = "JHXS" + docDate + "001";
+                    contractNum = contractPrefix + docDate + "001";
                 } else {
-                    contractNum = "JHXS" + (Long.parseLong(latestContract.getContractNum().substring(4)) + 1);
+                    contractNum = contractPrefix + (Long.parseLong(latestContract.getContractNum().substring(4)) + 1);
                 }
                 contractService.save(
                         ContractDO.builder().contractNum(contractNum).docNo(docNo).docTypeNo(docTypeNo).build());
@@ -140,7 +170,12 @@ public class SalesOrderController {
             model.addAttribute("totalAmount", totalAmount);
             model.addAttribute("totalAmountCn", Convert.digitToChinese(totalAmount));
 
-            String htmlContent = thymeleafRenderer.renderTemplate("contract.html", model);
+            String htmlContent;
+            if ("0001".equals(companyNo)) {
+                htmlContent = thymeleafRenderer.renderTemplate("contract1.html", model);
+            } else {
+                htmlContent = thymeleafRenderer.renderTemplate("contract2.html", model);
+            }
 
             ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
             PdfGenerator pdfGenerator = new PdfGenerator(resourceLoader);

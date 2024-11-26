@@ -61,7 +61,7 @@ public class VATInvoiceServiceImpl extends ServiceImpl<VATInvoiceMapper, VATInvo
             for (VATInvoiceDO vatInvoiceDO : vatInvoiceDOList) {
                 if (!isEmpty(vatInvoiceDO.getSellerName())) {
                     ErpRequest<ResultParameter<Supplier>> request = ErpClient.request(
-                            buildErpRequest(vatInvoiceDO.getSellerName()), "yf.oapi.supplier.query.get",
+                            buildErpRequest(vatInvoiceDO.getSellerName()), "0001", "yf.oapi.supplier.query.get",
                             Supplier.class);
                     List<Supplier> rows = request.getStdData().getParameter().getQueryResult().getRows();
                     Supplier supplier = rows.get(0);

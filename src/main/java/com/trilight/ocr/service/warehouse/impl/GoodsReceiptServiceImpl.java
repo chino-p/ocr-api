@@ -4,6 +4,7 @@ import cn.hutool.core.bean.BeanUtil;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.trilight.ocr.client.erp.ErpClient;
 import com.trilight.ocr.client.erp.model.*;
 import com.trilight.ocr.client.minio.MinioService;
@@ -71,12 +72,13 @@ public class GoodsReceiptServiceImpl extends ServiceImpl<GoodsReceiptMapper, Goo
                 stdData.setParameter(requestParameter);
                 requestParameter.setConditions(condition);
                 ErpRequest<ResultParameter<GoodsReceipt>> request = ErpClient.request(erpRequest,
-                        "yf.oapi.purchase.receipt.data.query.get", GoodsReceipt.class);
+                        "yf.oapi.purchase.receipt.data.query.get", "0001", GoodsReceipt.class);
                 List<GoodsReceipt> rows = request.getStdData().getParameter().getQueryResult().getRows();
                 if (rows != null && !rows.isEmpty()) {
                     for (GoodsReceipt goodsReceipt : rows) {
                         goodsReceiptDO.setDocNo(goodsReceipt.getDocNo());
                         goodsReceiptDO.setDocTypeNo(goodsReceipt.getDocTypeNo());
+                        goodsReceiptDO.setFileName(originalFilename);
                         goodsReceiptDO.setDeliveryNum(goodsReceipt.getSupplierOrderNo());
                         goodsReceiptDO.setSupplierNo(goodsReceipt.getSupplierNo());
                         goodsReceiptDO.setOssFileName(ossFileName);
@@ -150,24 +152,7 @@ public class GoodsReceiptServiceImpl extends ServiceImpl<GoodsReceiptMapper, Goo
         try {
             GoodsReceiptDO goodsReceiptDO = getById(id);
 
-            StdData<ReadQueryParameter> stdData = new StdData<>();
-            ErpRequest<ReadQueryParameter> erpRequest = new ErpRequest<>();
-            erpRequest.setStdData(stdData);
-            ReadQueryParameter requestParameter = new ReadQueryParameter();
-            List<DataKey> dataKeyList = new ArrayList<>();
-            DataKey dataKey = new DataKey();
-            dataKey.setDocTypeNo(goodsReceiptDO.getDocTypeNo());
-            dataKey.setDocNo(goodsReceiptDO.getDocNo());
-            dataKeyList.add(dataKey);
-            requestParameter.setDataKeyList(dataKeyList);
-            stdData.setParameter(requestParameter);
-
-            ErpRequest<ResultParameter<GoodsReceipt>> request = ErpClient.request(erpRequest,
-                    "yf.oapi.purchase.receipt.data.read.get", GoodsReceipt.class);
-            List<Success<GoodsReceipt>> successList = request.getStdData().getParameter().getQueryResult().getSuccessList();
-            Success<GoodsReceipt> goodsReceiptSuccess = successList.get(0);
-            List<GoodsReceipt> goodsReceiptList = goodsReceiptSuccess.getPurchaseReceiptData();
-            GoodsReceipt goodsReceipt = goodsReceiptList.get(0);
+            GoodsReceipt goodsReceipt = getGoodsReceipt(goodsReceiptDO.getDocTypeNo(), goodsReceiptDO.getDocNo());
             List<GoodsReceiptDetail> goodsReceiptDetailList = goodsReceipt.getGoodsReceiptDetailList();
             return goodsReceiptDetailList.stream().map(
                     goodsReceiptDetail -> {
@@ -184,5 +169,53 @@ public class GoodsReceiptServiceImpl extends ServiceImpl<GoodsReceiptMapper, Goo
         }
 
         return null;
+    }
+
+    private static GoodsReceipt getGoodsReceipt(String docTypeNo, String docNo) throws JsonProcessingException {
+        StdData<ReadQueryParameter> stdData = new StdData<>();
+        ErpRequest<ReadQueryParameter> erpRequest = new ErpRequest<>();
+        erpRequest.setStdData(stdData);
+        ReadQueryParameter requestParameter = new ReadQueryParameter();
+        List<DataKey> dataKeyList = new ArrayList<>();
+        DataKey dataKey = new DataKey();
+        dataKey.setDocTypeNo(docTypeNo);
+        dataKey.setDocNo(docNo);
+        dataKeyList.add(dataKey);
+        requestParameter.setDataKeyList(dataKeyList);
+        stdData.setParameter(requestParameter);
+
+        ErpRequest<ResultParameter<GoodsReceipt>> request = ErpClient.request(erpRequest,
+                "yf.oapi.purchase.receipt.data.read.get", "0001", GoodsReceipt.class);
+        List<Success<GoodsReceipt>> successList = request.getStdData().getParameter().getQueryResult().getSuccessList();
+        Success<GoodsReceipt> goodsReceiptSuccess = successList.get(0);
+        List<GoodsReceipt> goodsReceiptList = goodsReceiptSuccess.getPurchaseReceiptData();
+        GoodsReceipt goodsReceipt = goodsReceiptList.get(0);
+        return goodsReceipt;
+    }
+
+    @Override
+    public GoodsReceiptDTO searchErp(String docTypeNo, String docNo) {
+        try {
+            GoodsReceipt goodsReceipt = getGoodsReceipt(docTypeNo, docNo);
+            GoodsReceiptDTO goodsReceiptDTO = new GoodsReceiptDTO();
+            goodsReceiptDTO.setDocNo(goodsReceipt.getDocNo());
+            goodsReceiptDTO.setDocTypeNo(goodsReceipt.getDocTypeNo());
+            goodsReceiptDTO.setSupplierNo(goodsReceipt.getSupplierNo());
+            List<GoodsReceiptDetailDTO> goodsReceiptDetailDTOList = goodsReceipt.getGoodsReceiptDetailList().stream()
+                    .map(
+                            goodsReceiptDetail -> {
+                                GoodsReceiptDetailDTO goodsReceiptDetailDTO = new GoodsReceiptDetailDTO();
+                                goodsReceiptDetailDTO.setItemNo(goodsReceiptDetail.getItemNo());
+                                goodsReceiptDetailDTO.setItemName(goodsReceiptDetail.getItemName());
+                                goodsReceiptDetailDTO.setArrivalQty(goodsReceiptDetail.getArrivalQty());
+                                goodsReceiptDetailDTO.setItemSpec(goodsReceiptDetail.getItemSpec());
+                                return goodsReceiptDetailDTO;
+                            }
+                    ).toList();
+            goodsReceiptDTO.setGoodsReceiptDetailDTOList(goodsReceiptDetailDTOList);
+            return goodsReceiptDTO;
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

@@ -44,7 +44,7 @@ class ErpClientTest {
         requestParameter.setConditions(condition);
 
         ErpRequest<ResultParameter<SalesOrder>> request = ErpClient.request(erpRequest,
-                "yf.oapi.sales.order.data.query.get", SalesOrder.class);
+                "yf.oapi.sales.order.data.query.get", "0001", SalesOrder.class);
         System.out.println(request);
     }
 
@@ -65,7 +65,7 @@ class ErpClientTest {
         stdData.setParameter(requestParameter);
 
         ErpRequest<ResultParameter<SalesOrder>> request = ErpClient.request(erpRequest,
-                "yf.oapi.sales.order.data.read.get", SalesOrder.class);
+                "yf.oapi.sales.order.data.read.get", "0001", SalesOrder.class);
         System.out.println(request);
     }
     @Test
@@ -89,7 +89,7 @@ class ErpClientTest {
         stdData.setParameter(requestParameter);
         requestParameter.setConditions(condition);
         ErpRequest<ResultParameter<GoodsReceipt>> request = ErpClient.request(erpRequest,
-                "yf.oapi.purchase.receipt.data.query.get", GoodsReceipt.class);
+                "yf.oapi.purchase.receipt.data.query.get","0001", GoodsReceipt.class);
         List<GoodsReceipt> rows = request.getStdData().getParameter().getQueryResult().getRows();
         System.out.println(rows);
     }

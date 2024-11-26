@@ -14,19 +14,17 @@ public class ErpClient {
 
     private static final ObjectMapper objectMapper = new ObjectMapper();
 
-    public static <T, R> ErpRequest<ResultParameter<T>> request(ErpRequest<R> request, String serviceName, Class<T> resultClass) throws
+    public static <T, R> ErpRequest<ResultParameter<T>> request(ErpRequest<R> request, String serviceName,
+                                                                String companyNo, Class<T> resultClass) throws
             JsonProcessingException {
-        // API URL
         String url = "http://10.0.3.100/YFOAP/openapi.dll/datasnap/rest/TServerMethods1/ATNPost";
 
-        // 构造请求头
         HttpRequest httpRequest = HttpUtil.createPost(url)
                 .header("digi-user-token", "68E7C1511D55F57BEC2C0AF86C1085714B7F8AB6560FB177")
                 .header("Content-Type", "application/json; charset=utf-8")
                 .header("digi-service", String.format("{\"name\":\"%s\"}", serviceName))
-                .header("digi-datakey", "{\"CompanyId\":\"0001\"}");
+                .header("digi-datakey", String.format("{\"CompanyId\":\"%s\"}", companyNo));
 
-        // 将请求体转换为 JSON 字符串
         String requestBody = objectMapper.writeValueAsString(request);
 
         HttpResponse response = httpRequest.body(requestBody).execute();
