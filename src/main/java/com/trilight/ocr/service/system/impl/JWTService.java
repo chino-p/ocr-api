@@ -10,6 +10,8 @@ import org.springframework.stereotype.Service;
 import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
 import java.security.NoSuchAlgorithmException;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.Base64;
 import java.util.Date;
 import java.util.HashMap;
@@ -33,12 +35,14 @@ public class JWTService {
 
     public String generateToken(String username) {
         Map<String, Object> claims = new HashMap<>();
+        ZonedDateTime now = ZonedDateTime.now(ZoneId.systemDefault());
+
         return Jwts.builder()
                 .claims()
                 .add(claims)
                 .subject(username)
-                .issuedAt(new Date(System.currentTimeMillis()))
-                .expiration(new Date(System.currentTimeMillis() + 60 * 60 * 30))
+                .issuedAt(Date.from(now.toInstant()))
+                .expiration(Date.from(now.plusHours(24).toInstant()))
                 .and()
                 .signWith(getKey())
                 .compact();

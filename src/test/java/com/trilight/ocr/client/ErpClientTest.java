@@ -7,6 +7,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.TimeZone;
 
 @SpringBootTest
 class ErpClientTest {
@@ -92,5 +93,10 @@ class ErpClientTest {
                 "yf.oapi.purchase.receipt.data.query.get","0001", GoodsReceipt.class);
         List<GoodsReceipt> rows = request.getStdData().getParameter().getQueryResult().getRows();
         System.out.println(rows);
+    }
+
+    @Test
+    void testTime() {
+        System.out.println(TimeZone.getDefault());
     }
 }

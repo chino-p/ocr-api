@@ -18,7 +18,6 @@ public class UserController {
 
     @PostMapping("/login")
     public R<String> login(@RequestBody SysUserDTO userDTO) {
-        String token = userService.login(userDTO);
-        return R.ok(token);
+        return userService.login(userDTO);
     }
 }

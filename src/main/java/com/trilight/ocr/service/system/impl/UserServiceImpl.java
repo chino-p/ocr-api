@@ -2,6 +2,7 @@ package com.trilight.ocr.service.system.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.trilight.ocr.common.model.R;
 import com.trilight.ocr.mapper.system.UserMapper;
 import com.trilight.ocr.model.dto.system.SysUserDTO;
 import com.trilight.ocr.model.pojo.system.SysUserDO;
@@ -18,15 +19,15 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, SysUserDO> implemen
     private final PasswordEncoder passwordEncoder;
 
     @Override
-    public String login(SysUserDTO userDTO) {
+    public R<String> login(SysUserDTO userDTO) {
         SysUserDO sysUserDO = getOne(new QueryWrapper<SysUserDO>().eq("username", userDTO.getUsername()));
         if (sysUserDO == null) {
-            return "fail";
+            return R.fail();
         }
 
         if(!passwordEncoder.matches(userDTO.getPassword(), sysUserDO.getPassword())) {
-            return "fail";
+            return R.fail();
         }
-        return jwtService.generateToken(userDTO.getUsername());
+        return R.ok("success", jwtService.generateToken(userDTO.getUsername()));
     }
 }
