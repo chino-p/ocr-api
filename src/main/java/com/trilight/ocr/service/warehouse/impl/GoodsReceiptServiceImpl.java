@@ -53,7 +53,7 @@ public class GoodsReceiptServiceImpl extends ServiceImpl<GoodsReceiptMapper, Goo
                 ossFileName = minioService.uploadFile(file);
                 String base64Content = FileProcessUtil.processPdfToBase64(file.getInputStream());
                 String code = BaiduOcrClient.parseDeliveryCode(base64Content);
-                GoodsReceiptDO goodsReceiptDO = new GoodsReceiptDO();
+
                 StdData<RequestParameter> stdData = new StdData<>();
                 ErpRequest<RequestParameter> erpRequest = new ErpRequest<>();
                 erpRequest.setStdData(stdData);
@@ -76,6 +76,7 @@ public class GoodsReceiptServiceImpl extends ServiceImpl<GoodsReceiptMapper, Goo
                 List<GoodsReceipt> rows = request.getStdData().getParameter().getQueryResult().getRows();
                 if (rows != null && !rows.isEmpty()) {
                     for (GoodsReceipt goodsReceipt : rows) {
+                        GoodsReceiptDO goodsReceiptDO = new GoodsReceiptDO();
                         goodsReceiptDO.setDocNo(goodsReceipt.getDocNo());
                         goodsReceiptDO.setDocTypeNo(goodsReceipt.getDocTypeNo());
                         goodsReceiptDO.setFileName(originalFilename);
@@ -85,16 +86,43 @@ public class GoodsReceiptServiceImpl extends ServiceImpl<GoodsReceiptMapper, Goo
                         save(goodsReceiptDO);
                     }
                 } else {
-                    FailedFileDO failedFileDO = new FailedFileDO();
-                    failedFileDO.setFileName(originalFilename);
-                    failedFileDO.setOssFileName(ossFileName);
-                    failedFileService.save(failedFileDO);
+                    ErpRequest<ResultParameter<GoodsReceipt>> requestHf = ErpClient.request(erpRequest,
+                            "yf.oapi.purchase.receipt.data.query.get", "0003", GoodsReceipt.class);
+                    List<GoodsReceipt> rows2 = request.getStdData().getParameter().getQueryResult().getRows();
+                    if (rows2 != null && !rows2.isEmpty()) {
+                        for (GoodsReceipt goodsReceipt : rows2) {
+                            GoodsReceiptDO goodsReceiptDO = new GoodsReceiptDO();
+                            goodsReceiptDO.setDocNo(goodsReceipt.getDocNo());
+                            goodsReceiptDO.setDocTypeNo(goodsReceipt.getDocTypeNo());
+                            goodsReceiptDO.setFileName(originalFilename);
+                            goodsReceiptDO.setDeliveryNum(goodsReceipt.getSupplierOrderNo());
+                            goodsReceiptDO.setSupplierNo(goodsReceipt.getSupplierNo());
+                            goodsReceiptDO.setOssFileName(ossFileName);
+                            save(goodsReceiptDO);
+                        }
+                    } else {
+                        FailedFileDO failedFileDO = new FailedFileDO();
+                        failedFileDO.setFileName(originalFilename);
+                        failedFileDO.setOssFileName(ossFileName);
+                        failedFileDO.setReason("未找到对应单据");
+                        failedFileDO.setRemark(code);
+                        failedFileService.save(failedFileDO);
+                    }
                 }
             } catch (Exception e) {
                 FailedFileDO failedFileDO = new FailedFileDO();
                 failedFileDO.setFileName(originalFilename);
                 failedFileDO.setOssFileName(ossFileName);
-                failedFileDO.setReason(e.getMessage());
+                String errorMessage = (e.getMessage() != null) ? e.getMessage() : "No error message available";
+                if (errorMessage != null && errorMessage.length() > 200) {
+                    failedFileDO.setReason(errorMessage.substring(0, 200));
+                } else {
+                    failedFileDO.setReason(errorMessage);
+                }
+
+                if (errorMessage.contains("Duplicate entry")) {
+                    failedFileDO.setReason("文件已存在");
+                }
                 failedFileService.save(failedFileDO);
                 log.error("文件上传失败");
             }

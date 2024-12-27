@@ -19,4 +19,6 @@ public class FailedFileDO {
     private String reason;
 
     private Integer status;
+
+    private String remark;
 }

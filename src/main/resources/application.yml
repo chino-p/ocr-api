@@ -16,11 +16,18 @@ spring:
           url: jdbc:mysql://172.16.20.19:3306/tds?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8&rewriteBatchedStatements=true
           username: root
           password: root
+#        erp:
+#          type: com.zaxxer.hikari.HikariDataSource
+#          driverClassName: com.microsoft.sqlserver.jdbc.SQLServerDriver
+#          url: jdbc:sqlserver://10.0.3.100:1433;databaseName=JHKJ
+#          username: sa
+#          password: WHjh123456
+
       strict: true
   servlet:
     multipart:
-      max-file-size: 10MB    # 每个文件的最大大小
-      max-request-size: 10MB # 总请求的最大大小
+      max-file-size: 400MB    # 每个文件的最大大小
+      max-request-size: 400MB # 总请求的最大大小
   mvc:
     favicon:
       enabled: false

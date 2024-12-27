@@ -81,17 +81,17 @@ public class SalesOrderController {
         field1.setFieldName("customer_no");
         field1.setValue(customerNo);
         field1.setOperator("=");
-        Field field2 = new Field();
-        field2.setFieldName("doc_type_no");
-        field2.setValue(docTypeNo);
-        field2.setOperator("=");
+        // Field field2 = new Field();
+        // field2.setFieldName("doc_type_no");
+        // field2.setValue(docTypeNo);
+        // field2.setOperator("=");
         Field field3 = new Field();
         field3.setFieldName("remarks_1");
         field3.setValue("1");
         field3.setOperator("=");
         List<Field> fieldList = new ArrayList<>();
         fieldList.add(field1);
-        fieldList.add(field2);
+        // fieldList.add(field2);
         condition.setFields(fieldList);
         condition.setOperator("AND");
         stdData.setParameter(requestParameter);
@@ -172,6 +172,9 @@ public class SalesOrderController {
 
             String htmlContent;
             if ("0001".equals(companyNo)) {
+                for (ProductDTO productDTO : productList) {
+                    productDTO.setName(productDTO.getName().replaceFirst("光模块", "中性模块"));
+                }
                 htmlContent = thymeleafRenderer.renderTemplate("contract.html", model);
             } else {
                 htmlContent = thymeleafRenderer.renderTemplate("contract2.html", model);
