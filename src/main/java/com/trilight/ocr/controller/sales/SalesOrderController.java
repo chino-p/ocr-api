@@ -173,7 +173,7 @@ public class SalesOrderController {
             String htmlContent;
             if ("0001".equals(companyNo)) {
                 for (ProductDTO productDTO : productList) {
-                    productDTO.setName(productDTO.getName().replaceFirst("光模块", "中性模块"));
+                    productDTO.setName(productDTO.getName().replaceFirst("光模块", "") + " 中性模块");
                 }
                 htmlContent = thymeleafRenderer.renderTemplate("contract.html", model);
             } else {

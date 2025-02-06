@@ -21,6 +21,7 @@ import com.trilight.ocr.service.purchase.VATInvoiceService;
 import com.trilight.ocr.utils.FileProcessUtil;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.apache.pdfbox.pdmodel.PDDocument;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -47,23 +48,55 @@ public class VATInvoiceServiceImpl extends ServiceImpl<VATInvoiceMapper, VATInvo
         try {
             List<VATInvoiceDTO> vatInvoiceDTOList = new ArrayList<>();
             for (MultipartFile file : files) {
-                String base64Content = FileProcessUtil.processFile(file);
-                VATInvoiceDTO vatInvoiceDTO = BaiduOcrClient.parseVatInvoice(base64Content);
-                String ossFileName = minioService.uploadFile(file);
-                if (vatInvoiceDTO == null) {
-                    throw new BizException(BizCodeEnum.FILE_PROCESS_ERROR);
+                try (InputStream inputStream = file.getInputStream();) {
+                    String base64Content = FileProcessUtil.processFile(file);
+                    String originalFilename = file.getOriginalFilename();
+                    String filename = extractBeforePdf(originalFilename);
+                    PDDocument document = PDDocument.load(inputStream);
+                    int numberOfPages = document.getNumberOfPages();
+                    inputStream.close();
+                    VATInvoiceDTO vatInvoiceDTO = BaiduOcrClient.parseVatInvoice(
+                            base64Content, String.valueOf(numberOfPages), filename);
+                    String ossFileName = minioService.uploadFile(file);
+                    if (vatInvoiceDTO == null) {
+                        throw new BizException(BizCodeEnum.FILE_PROCESS_ERROR);
+                    }
+                    vatInvoiceDTO.setOssFileName(ossFileName);
+                    vatInvoiceDTOList.add(vatInvoiceDTO);
                 }
-                vatInvoiceDTO.setOssFileName(ossFileName);
-                vatInvoiceDTOList.add(vatInvoiceDTO);
             }
 
             List<VATInvoiceDO> vatInvoiceDOList = BeanUtil.copyToList(vatInvoiceDTOList, VATInvoiceDO.class);
             for (VATInvoiceDO vatInvoiceDO : vatInvoiceDOList) {
-                if (!isEmpty(vatInvoiceDO.getSellerName())) {
+                String sellerName = vatInvoiceDO.getSellerName();
+                if (!isEmpty(sellerName)) {
                     ErpRequest<ResultParameter<Supplier>> request = ErpClient.request(
-                            buildErpRequest(vatInvoiceDO.getSellerName()), "0001", "yf.oapi.supplier.query.get",
+                            buildErpRequest(sellerName), "yf.oapi.supplier.query.get", "0001",
                             Supplier.class);
+
                     List<Supplier> rows = request.getStdData().getParameter().getQueryResult().getRows();
+                    if (rows.isEmpty()) {
+                        if (sellerName.contains("(")) {
+                            sellerName = sellerName.replace("(", "（");
+                            sellerName = sellerName.replace(")", "）");
+                        } else {
+                            sellerName = sellerName.replace("（", "(");
+                            sellerName = sellerName.replace("）", ")");
+                        }
+
+                        ErpRequest<ResultParameter<Supplier>> request2 = ErpClient.request(
+                                buildErpRequest(sellerName), "yf.oapi.supplier.query.get", "0001",
+                                Supplier.class);
+                        rows = request2.getStdData().getParameter().getQueryResult().getRows();
+                        if (rows.isEmpty()) {
+                            ErpRequest<ResultParameter<Supplier>> request3 = ErpClient.request(
+                                    buildErpRequest(sellerName), "yf.oapi.supplier.query.get", "0003",
+                                    Supplier.class);
+
+                            rows = request3.getStdData().getParameter().getQueryResult().getRows();
+                        }
+                    }
+
                     Supplier supplier = rows.get(0);
                     vatInvoiceDO.setSupplierNo(supplier.getSupplierNo());
                 }
@@ -76,11 +109,20 @@ public class VATInvoiceServiceImpl extends ServiceImpl<VATInvoiceMapper, VATInvo
                     ).toList();
             Db.saveBatch(commodityDOList);
             return R.ok();
-        } catch (IOException e) {
-            throw new BizException(BizCodeEnum.FILE_PROCESS_ERROR);
-        } catch (Exception e) {
+        }
+        // catch (IOException e) {
+        //     throw new BizException(BizCodeEnum.FILE_PROCESS_ERROR);
+        // }
+        catch (Exception e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public static String extractBeforePdf(String fileName) {
+        if (fileName != null && fileName.contains(".pdf")) {
+            return fileName.substring(0, fileName.lastIndexOf(".pdf"));
+        }
+        return fileName;
     }
 
     private ErpRequest<RequestParameter> buildErpRequest(String supplierFullName) {

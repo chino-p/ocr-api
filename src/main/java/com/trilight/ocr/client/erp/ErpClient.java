@@ -20,7 +20,7 @@ public class ErpClient {
         String url = "http://10.0.3.100/YFOAP/openapi.dll/datasnap/rest/TServerMethods1/ATNPost";
 
         HttpRequest httpRequest = HttpUtil.createPost(url)
-                .header("digi-user-token", "68E7C1511D55F57BEC2C0AF86C1085714B7F8AB6560FB177")
+                .header("digi-user-token", "68E7C1511D55F57BEC2C0AF86C108571BECAE3EEE11238736A359C9F1CDFA493")
                 .header("Content-Type", "application/json; charset=utf-8")
                 .header("digi-service", String.format("{\"name\":\"%s\"}", serviceName))
                 .header("digi-datakey", String.format("{\"CompanyId\":\"%s\"}", companyNo));
